@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>天气</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <link href="../assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/admin/layout/css/layout.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/admin/layout/css/custom.css" rel="stylesheet" type="text/css"/>
+</head>
+<link rel="stylesheet" type="text/css" href="../../css/dataTables.bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css"/>
+<link href="../../css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../js/jquery.min.js"></script>
+<script src="https://widget.qweather.net/standard/static/js/he-standard-common.js?v=2.0"></script>
+<style>
+    .SortSure,.SortCancel,.AddSure{
+        width:96px; height:35px; line-height:35px; color:#fff; background:url(../../images/btnbg1.png) repeat-x; font-size:14px; font-weight:bold;border-radius: 3px; cursor:pointer;
+    }
+    .SortCancel{
+        background:url(../../images/btnbg2.png) repeat-x;color:#000;font-weight:normal;
+    }
+    .SortTip {
+        width: 485px;
+        height: 150px;
+        position: absolute;
+        top: 10%;
+        left: 30%;
+        background: #fcfdfd;
+        box-shadow: 1px 8px 10px 1px #9b9b9b;
+        border-radius: 1px;
+        behavior: url(../../js/pie.htc);
+        display: none;
+        z-index: 111111;
+    }
+</style>
+<script>
+    WIDGET = {
+        "CONFIG": {
+            "layout": "1",
+            "width": "1400",
+            "height": "300",
+            "background": "1",
+            "dataColor": "FFFFFF",
+            "borderRadius": "10",
+            "city": "CN101270106",
+            "key": "80f77004669145a98b6a24a25b63bcf3"
+        }
+    }
+</script>
+<body onload="init()">
+<div  style="position: relative; width: 100%;height: 320px;left: 0">
+    <div class="portlet blue box">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-cogs"></i>实时天气
+            </div>
+        </div>
+        <div id="he-plugin-standard"></div>
+    </div>
+</div>
+
+<div  style="position: relative; width: 100%;height: 50px; float: left; ">
+    <div class="portlet blue box">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-cogs"></i>查看天气信息
+            </div>
+        </div>
+    </div>
+</div>
+<!--toolBar-->
+<div class="rightinfo">
+
+    <div class="tools">
+
+        <ul class="toolbar">
+            <li id="addBtn" onclick="document.getElementById('add_tip').style.display='block'"><img src="../../images/t01.png">添加</li>
+            <li onclick="window.location.href='weatherStatistics.html'"><img src="../../images/t04.png" />统计</li>
+            <li onclick="Export()"><img src="../../images/export.png" />导出</li>
+            <li onclick="Print()"><img src="../../images/print.png" />打印</li>
+            <li onclick="Order()"><img src="../../images/sort.png" />排序</li>
+
+        </ul>
+
+
+    </div>
+    <div style="position: relative; width: 88%">
+        <table class="table table-striped table-bordered table-hover datatable" id="record_list">
+            <thead>
+            <tr>
+                <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#record_list .checkboxes" /></th>
+                <th>城市</th>
+                <th>日期</th>
+                <th>天气</th>
+                <th>最高温度</th>
+                <th>最低温度</th>
+                <th>风速</th>
+                <th>湿度</th>
+                <th>代办事项</th>
+                <th>代办事项操作</th>
+                <th>其他操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div class="tip" id="tip">
+        <div class="tiptop"><span>提示信息</span><a></a></div>
+
+        <div class="tipinfo">
+            <span><img src="../../images/tip.png" /></span>
+            <div class="tipright">
+                <p id="flag"></p>
+                <cite><a href="" id="txtDownLoadHref">[点击下载txt]</a></cite>
+                <cite><a href="" id="excelDownLoadHref">[点击下载excel]</a></cite>
+            </div>
+
+            <div class="tipright">
+                <cite><a href="" id="pdfDownLoadHref">[点击下载pdf]</a></cite>
+                <cite><a href="" id="csvDownLoadHref">[点击下载csv]</a></cite>
+            </div>
+        </div>
+    </div>
+
+    <div style="position: relative; height: 50px"></div>
+    <div class="row" id="addTodoListForm" style="display: none">
+        <div class="col-md-12" style="position: relative; height: 500px;width: 100%;">
+            <div  style="position: relative; width: 100%;">
+                <div class="portlet blue box">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs"></i>增加代办事项
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- BEGIN PORTLET-->
+
+            <div class="portlet-body form">
+                <form action="#" id="username" class="form-horizontal form-bordered">
+                    <div class="form-group">
+                    </div>
+                    <div class="form-group last">
+                        <label class="col-md-1 control-label">代办事项</label>
+                        <div class="col-md-11">
+                            <textarea class="form-control" rows="6" placeholder="请输入待办事项... " id="addTodoList"></textarea>
+                            <p class="help-block">
+                                请在 <code>方框内</code> 输入代办事项
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="row">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button type="button" class="btn red" onclick="Submit()">提交</button>
+                                <button type="button" class="btn default" onclick="window.location.reload()">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- END PORTLET-->
+    </div>
+    <!--    修改代办事项-->
+    <div class="row" id="modifyTodoListForm" style="display: none">
+        <div class="col-md-12" style="position: relative; height: 500px;width: 100%;">
+            <div  style="position: relative; width: 100%;">
+                <div class="portlet blue box">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs"></i>修改代办事项
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- BEGIN PORTLET-->
+
+            <div class="portlet-body form">
+                <form action="#" id="form-username" class="form-horizontal form-bordered">
+                    <div class="form-group">
+                    </div>
+                    <div class="form-group last">
+                        <label class="col-md-1 control-label">代办事项</label>
+                        <div class="col-md-11">
+                            <textarea class="form-control" rows="6" placeholder="请输入待办事项... " id="modifyTodoList"></textarea>
+                            <p class="help-block">
+                                请在 <code>方框内</code> 输入代办事项
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="row">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button type="button" class="btn red" onclick="SubmitModify()">提交修改</button>
+                                <button type="button" class="btn default" onclick="window.location.reload()">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- END PORTLET-->
+    </div>
+
+    <!--添加天气信息-->
+    <div class="tip" id="add_tip" style="background: #eeeeee;position:absolute; height: 700px; top: 20px;" >
+        <div class="tiptop"><span>增加提示</span><a></a></div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0);">
+            <label style="position: relative; width: 20%; float: left">城市：</label>
+            <label>
+                <input id="city" type="text" style="position:relative; width: 80%; float: left" value="成都" readonly>
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">选择日期</label>
+            <label>
+                <input id="weatherDate" type="date" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">天气情况</label>
+            <label>
+                <input id="weatherConfig" type="text" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">最高温度</label>
+            <label>
+                <input id="highTem" type="text" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">最低温度</label>
+            <label>
+                <input id="lowTem" type="text" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">风速</label>
+            <label>
+                <input id="winSpeed" type="text" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">湿度</label>
+            <label>
+                <input id="humidity" type="text" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <!--tip中的button-->
+        <div class="tipbtn">
+            <input name="" type="button"  class="AddSure" value="添加" onclick="addWeatherSubmit()"/>
+            <input name="" type="button"  class="cancel" value="取消" onclick="document.getElementById('add_tip').style.display='none'"/>
+        </div>
+
+    </div>
+
+    <!--修改天气信息-->
+    <div class="tip" id="modify_tip" style="background: #eeeeee;position:absolute; height: 700px; top: 20px;" >
+        <div class="tiptop"><span>修改提示</span><a></a></div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0);">
+            <label style="position: relative; width: 20%; float: left">城市：</label>
+            <label>
+                <input id="nCity" type="text" style="position:relative; width: 80%; float: left" value="成都" readonly>
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">更改日期</label>
+            <label>
+                <input id="nWeatherDate" type="date" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">天气情况</label>
+            <label>
+                <input id="nWeatherConfig" type="text" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">最高温度</label>
+            <label>
+                <input id="nHighTem" type="text" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">最低温度</label>
+            <label>
+                <input id="nLowTem" type="text" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">风速</label>
+            <label>
+                <input id="nWinSpeed" type="text" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <div style="position:relative; width: 80%; height: 12%; left: 10%; right: 10%; top: 8%; transform: translate(-10%,0)">
+            <label style="position: relative; width: 20%; float: left">湿度</label>
+            <label>
+                <input id="nHumidity" type="text" style="position:relative; width: 80%; float: left" value="">
+            </label>
+        </div>
+
+        <!--tip中的button-->
+        <div class="tipbtn">
+            <input name="" type="button"  class="AddSure" value="提交修改" onclick="modifyWeatherInfoSubmit()"/>
+            <input name="" type="button"  class="cancel" value="取消" onclick="document.getElementById('modify_tip').style.display='none'"/>
+        </div>
+
+    </div>
+</div>
+<div style="position:relative; height: 150px;" id="tag"></div>
+
+
+</body>
+
+<script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
+
+<script>
+    // 注意getWeather()中的result.data中存有alarm信息，可以作为预警信息
+    let message={};
+    let resultList=[];
+    let userLevel=sessionStorage.getItem("level");
+    function init(){
+        if(userLevel==2){
+            document.getElementById("addBtn").style.display="none";
+        }
+        getWeather();
+    }
+    function initTable(){
+        resultList=[];
+        $('.datatable').dataTable({
+            "paging": true,
+            "searching": true,
+            "destroy":true,
+            "oLanguage": {
+                "aria": {
+                    "sortAscending": ": activate to sort column ascending",
+                    "sortDescending": ": activate to sort column descending"
+                },
+                "sProcessing": "处理中...",
+                "sLengthMenu": "_MENU_ 记录/页",
+                "sZeroRecords": "没有匹配的记录",
+                "sInfo": "显示第 _START_ 至 _END_ 项记录，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项记录，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项记录过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "查询:",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                }
+            },
+            "aoColumns": [{
+                "mRender": function (data, type, full) {
+                    resultList.push(full);
+                    sReturn = '<input type="checkbox" class="checkboxes" value="' + data + '"/>';
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.city+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.day+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn ="<div>"+full.wea+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.hightem+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.lowtem+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.winSpeed+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.humidity+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    if(full.todoList==null){
+                        sReturn = "<div>null</div>";
+                    }else{
+                        sReturn = "<div>"+full.todoList+"</div>";
+                    }
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    if(userLevel==0){
+                        sReturn = "<a href=\"javascript:AddTodoList("+full.id+")\">【增代办事项】</a><a href=\"javascript:ModifyTodoList("+full.id+")\">【修改代办事项】</a><a href=\"javascript:DeleteTodoList(" + full.id + ")\">【删除代办事项】</a>";
+                    }else{
+                        sReturn = "无"
+                    }
+                    return sReturn;
+                }, "orderable": true
+            },{
+            "mRender": function (data, type, full) {
+                if(userLevel<=1){
+                    sReturn = "<a href=\"javascript:modifyWeatherInfo("+full.id+")\">【修改天气信息】</a><a href=\"javascript:deleteWeatherInfo(" + full.id + ")\">【删除天气信息】</a>";
+                }else{
+                    sReturn="Nat";
+                }
+                return sReturn;
+            }, "orderable": true
+        }],
+            "aLengthMenu": [[5, 10, 15, 20, 25, 40, 50, -1], [5, 10, 15, 20, 25, 40, 50, "所有记录"]],
+            "fnDrawCallback": function () {
+                $(".checkboxes").uniform();
+                $(".group-checkable").uniform();
+            },
+            "sAjaxSource": "../../Device_ServletAction?Action=getWeatherRecord"
+        });
+        $('.datatable').find('.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                    $(this).parents('tr').addClass("active");
+                } else {
+                    $(this).attr("checked", false);
+                    $(this).parents('tr').removeClass("active");
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+        $('.datatable').on('change', 'tbody tr .checkboxes', function () {
+            $(this).parents('tr').toggleClass("active");
+        });
+    }
+
+    function getWeather() {
+        $.get("https://devapi.qweather.com/v7/weather/3d?location=101270101&key=168a39cf24f541cf8b07cfc4f009e668",function (result){
+            if(result.code==200){
+                console.log(result.daily);
+                message.city="成都";
+                message.day=result.daily[0].fxDate;
+                message.week="null"
+                message.wea=result.daily[0].textDay;
+                message.hightem=result.daily[0].tempMax;
+                message.lowtem=result.daily[0].tempMin;
+                message.airLevel="开发者无法获取";
+                message.winSpeed=result.daily[0].windSpeedDay+"级";
+                message.humidity=result.daily[0].humidity+"%";
+                saveWeather();
+            }
+        })
+    }
+
+    function saveWeather(){
+        let url="../../Device_ServletAction";
+        message.Action="saveWeather";
+        console.log(message)
+        $.post(url, message, function (json){
+            if(json.ok==200){
+                initTable();
+            }else{
+                alert("保存失败");
+            }
+        })
+
+    }
+
+    function Export() {
+        // 建议JAVA后端查询得到的JSON直接导出，而不是前端向后端传递JSON再导出
+        let message = {};
+        let url = "../../Device_ServletAction"
+        message.Action = "exportFile";
+        message.tableName='weatherInfo';
+        message.tag=Math.random();
+        $.post(url, message, function (json) {
+            if (json.ok === 200) {
+                tip.style.display="block";
+                document.getElementById("flag").innerText="导出成功!";
+                $("#txtDownLoadHref").attr("href",json.txtDownloadPath);
+                $("#excelDownLoadHref").attr("href",json.excelDownloadPath);
+                $("#pdfDownLoadHref").attr("href",json.pdfDownloadPath);
+                $("#csvDownLoadHref").attr("href",json.csvDownloadPath);
+            } else {
+                alert("导出失败！")
+            }
+        });
+    }
+
+    function Print(){
+        window.open("feedbackPrint.html");
+    }
+
+    function Order() {
+        alert("点击表头进行排序")
+    }
+
+    function Search() {
+        alert("点击过滤进行查询")
+    }
+
+    function AddTodoList(id){
+        Id=id;
+        document.getElementById("modifyTodoListForm").style.display="none";
+        document.getElementById("addTodoListForm").style.display="block";
+    }
+
+    function ModifyTodoList(id){
+        Id=id;
+        document.getElementById("addTodoListForm").style.display="none";
+        document.getElementById("modifyTodoListForm").style.display="block";
+        for(let i=0;i<resultList.length;i++){
+            if(id==resultList[i].id){
+                document.getElementById("modifyTodoList").innerText=resultList[i].todoList;
+            }
+        }
+    }
+
+
+    let Id;
+
+    function SubmitModify(){
+        let todoList=document.getElementById("modifyTodoList").value;
+        let message={};
+        message.Action="SubmitModify";
+        message.todoList=todoList;
+        message.id=Id;
+        let url="../../Device_ServletAction";
+        $.post(url,message,function(json){
+            if(json.ok===200){
+                // 重新加载页面
+                alert("修改成功!");
+                initTable();
+            }else{
+                alert("提交加失败，请确定联网，稍后重试!");
+            }
+        })
+    }
+
+    function Submit(){
+        let todoList=document.getElementById("addTodoList").value;
+        let message={};
+        message.Action="AddSubmit";
+        message.todoList=todoList;
+        message.id=Id;
+        let url="../../Device_ServletAction";
+        console.log(message)
+        $.post(url,message,function(json){
+            if(json.ok===200){
+                // 重新加载页面
+                alert("提交成功!");
+                initTable();
+            }else{
+                alert("提交加失败，请确定联网，稍后重试!");
+            }
+        })
+    }
+
+    function DeleteTodoList(id){
+        if(confirm("您确定要删除这条代办事项吗？")){
+            if(id>-1){
+                let url="../../Device_ServletAction";
+                let todoList=document.getElementById("modifyTodoList").value;
+                let message={};
+                message.Action="deleteTodoList";
+                message.id=id;
+                message.todoList=todoList;
+                $.post(url,message,function(json){
+                    if(json.ok===200){
+                        alert("删除成功");
+                        // 重新加载页面
+                        initTable();
+                    }else{
+                        alert("删除失败，请确定联网，稍后重试!");
+                    }
+                });
+            }
+        }
+    }
+
+    // 确认添加天气信息
+    function addWeatherSubmit(){
+        let url="../../Device_ServletAction";
+        let message={};
+        let day=document.getElementById("weatherDate").value;
+        let wea=document.getElementById("weatherConfig").value;
+        let hightem=document.getElementById("highTem").value;
+        let lowtem=document.getElementById("lowTem").value;
+        let winSpeed=document.getElementById("winSpeed").value;
+        let humidity=document.getElementById("humidity").value;
+        if(day=="" || wea=="" || lowtem=="" || hightem=="" || winSpeed=="" || humidity==""){
+            alert("请输入完整信息");
+            return;
+        }
+        message.day=day;
+        message.wea=wea;
+        message.hightem=hightem;
+        message.lowtem=lowtem;
+        message.winSpeed=winSpeed;
+        message.humidity=humidity;
+        message.city=document.getElementById("city").value;
+        message.week="null";
+        message.airLevel="开发者无法获取";
+        message.Action="saveWeather";
+        console.log(message)
+        $.post(url, message, function (json){
+            if(json.ok==200){
+                alert("添加成功!");
+                document.getElementById("add_tip").style.display="none";
+                initTable();
+            }else{
+                alert("保存失败");
+            }
+        })
+    }
+
+    // 显示修改天气信息的tip
+    function modifyWeatherInfo(id){
+        Id=id;
+        document.getElementById("add_tip").style.display="none";
+        for(let i=0;i<resultList.length;i++){
+            if(resultList[i].id===id){
+                console.log(resultList[i]);
+                $("#nWeatherDate").val(resultList[i].day.toString().split(" ")[0]);
+                document.getElementById("nWeatherConfig").value=resultList[i].wea;
+                document.getElementById("nHighTem").value=resultList[i].hightem;
+                document.getElementById("nLowTem").value=resultList[i].lowtem;
+                document.getElementById("nWinSpeed").value=resultList[i].winSpeed;
+                document.getElementById("nHumidity").value=resultList[i].humidity;
+                break;
+            }
+        }
+        document.getElementById("modify_tip").style.display="block";
+    }
+
+    // 提交修改
+    function modifyWeatherInfoSubmit(){
+        if(confirm("您确定要修改该记录吗？")){
+            let message={};
+            let url="../../Device_ServletAction";
+            message.Action="modifyWeatherInfo";
+            message.city=document.getElementById("nCity").value;
+            message.hightem=document.getElementById("nHighTem").value;
+            message.lowtem=document.getElementById("nLowTem").value;
+            message.day=document.getElementById("nWeatherDate").value;
+            message.week="null"
+            message.wea=document.getElementById("nWeatherConfig").value;
+            message.airLevel="开发者无法获取";
+            message.winSpeed=document.getElementById("nWinSpeed").value;
+            message.humidity=document.getElementById("nHumidity").value;
+            message.id=Id;
+            console.log(message)
+            $.post(url,message,function (json){
+                if(json.ok==200){
+                    alert("修改成功！");
+                    document.getElementById("modify_tip").style.display="none";
+                    initTable();
+                }else{
+                    alert("修改失败!");
+                }
+            })
+        }
+    }
+
+    // 删除天气信息
+    function deleteWeatherInfo(id){
+        if(confirm("您确定要删除该天气信息吗?")){
+            let url="../../Device_ServletAction";
+            let message={};
+            message.Action="deleteWeatherInfo";
+            message.id=id;
+            $.post(url,message,function (json){
+                if(json.ok==200){
+                    alert("删除天气信息成功!");
+                    initTable();
+                }else{
+                    alert("删除失败，请稍后重试!");
+                }
+            });
+        }
+    }
+
+
+</script>
+
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>处理用户权限申请</title>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <link href="../assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+
+    <link rel="stylesheet" type="text/css" href="../../css/dataTables.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css"/>
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+</head>
+
+<body onload="init()">
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">权限管理</a></li>
+    </ul>
+</div>
+
+<!--toolBar-->
+<div class="rightinfo">
+    <div class="portlet-body">
+        <ul class="nav nav-pills">
+            <li class="active" id="apply1">
+                <a data-toggle="tab" style="height: 60px">
+                    查看全部申请 <i class="fa fa-angle-down"></i>
+                </a>
+            </li>
+            <li id="apply2">
+                <a data-toggle="tab" style="height: 60px">
+                    仅看已处理的申请 <i class="fa fa-angle-down"></i>
+                </a>
+            </li>
+            <li class="dropdown" id="apply3">
+                <a class="dropdown-toggle" data-toggle="dropdown" style="height: 60px">
+                    仅看未处理的申请 <i class="fa fa-angle-down"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="tools">
+        <ul class="toolbar">
+            <li id="modifyBtn"><img src="../../images/t02.png" />修改</li>
+            <li id="queryBtn"><img src="../../images/search.png" />查询</li>
+
+            <li id="exportBtn"><img src="../../images/export.png" />导出</li>
+            <li id="printBtn"><img src="../../images/print.png" />打印</li>
+            <li id="sortBtn"><img src="../../images/sort.png" />排序</li>
+            <li id="staticBtn" onclick=""><img src="../../images/t04.png" />统计</li>
+        </ul>
+    </div>
+
+
+    <div style="position: relative;width: 88%;">
+        <table class="table table-striped table-bordered table-hover datatable" id="record_list">
+            <thead>
+            <tr>
+                <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#record_list .checkboxes" /></th>
+                <th>申请用户(account)</th>
+                <th>用户邮箱(mail)</th>
+                <th>用户原始权限</th>
+                <th>用户申请权限</th>
+                <th>申请日期</th>
+                <th>是否被处理?</th>
+                <th>处理日期</th>
+                <th>处理人</th>
+                <th>处理人等级</th>
+                <th>处理结果</th>
+                <th>操作</th>
+                <th>处理申请</th>
+                <!--添加 允许/拒绝-->
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div style="position:relative; height: 70px"></div>
+    <!--导出tip-->
+    <div class="tip" id="tip">
+        <div class="tiptop"><span>导出提示</span><a></a></div>
+
+        <div class="tipinfo">
+            <span><img src="../../images/tip.png" /></span>
+            <div class="tipright">
+                <p id="flag"></p>
+                <cite><a href="" id="txtDownLoadHref">[点击下载txt]</a></cite>
+                <cite><a href="" id="excelDownLoadHref">[点击下载excel]</a></cite>
+            </div>
+            <div class="tipright">
+                <cite><a href="" id="pdfDownLoadHref">[点击下载pdf]</a></cite>
+                <cite><a href="" id="csvDownLoadHref">[点击下载csv]</a></cite>
+            </div>
+        </div>
+
+        <!--tip中的button-->
+        <div class="tipbtn">
+            <input name="" type="button" style="visibility: hidden" class="sure" value="确定" />
+            <input name="" type="button" style="position:relative; left: 40%"  class="sure" value="确定" />
+        </div>
+
+    </div>
+
+    <!--修改-->
+    <div class="row" style="display: none" id="modifyRecordForm">
+        <div class="col-md-12" style="position: relative; height: 100%;width: 85%; left: 15px; top:15px">
+            <!-- BEGIN PORTLET-->
+            <div class="portlet light bordered form-fit">
+                <div class="portlet-title">
+                    <div class="caption font-blue">
+                        <i class="icon-speech font-blue"></i>
+                        <span class="caption-subject bold uppercase" style="position: relative; width: 200px">修改权限申请记录</span>
+                        <span class="caption-helper"></span>
+                    </div>
+                </div>
+                <div class="portlet-body form">
+                    <form class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户名(userAccount)</label>
+                            <div class="col-md-9">
+                                <textarea class="form-control autosizeme" rows="1" placeholder="用户名(userAccount)" id="userAccount" readonly></textarea>
+                                <p class="help-block">
+                                    由于存在外码约束，用户名（userAccount）不可修改!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户邮箱(userMail)</label>
+                            <div class="col-md-9">
+                                <textarea class="form-control autosizeme" rows="1" placeholder="用户邮箱(userMail)" id="userMail" readonly></textarea>
+                                <p class="help-block">
+                                    由于存在外码约束，用户邮箱（userMail）不可修改!
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户原始权限(oldPermission)</label>
+                            <div class="col-md-9">
+                                <div class="form-group form-md-line-input form-md-floating-label" style="position:relative;width: 100%;">
+                                    <label for="oldPermission"></label><select class="form-control edited" style="font-size: 15px" id="oldPermission">
+                                    <option value="2" selected>普通用户</option>
+                                    <option value="1">普通管理员</option>
+                                    <option value="0">系统管理员</option>
+                                </select>
+                                </div>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户申请权限(newPermission)</label>
+                            <div class="col-md-9">
+                                <div class="form-group form-md-line-input form-md-floating-label" style="position:relative;width: 100%;">
+                                    <label for="newPermission"></label><select class="form-control edited" style="font-size: 15px" id="newPermission">
+                                    <option value="2" selected>普通用户</option>
+                                    <option value="1">普通管理员</option>
+                                    <option value="0">系统管理员</option>
+                                </select>
+                                </div>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">申请日期(applyDate)</label>
+                            <div class="col-md-9">
+                                <label for="applyDate"></label><input type="date" style="font-size: 20px" id="applyDate"/>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">该申请是否被处理(isDealed)</label>
+                            <div class="col-md-9">
+                                <div class="form-group form-md-line-input form-md-floating-label" style="position:relative;width: 100%;">
+                                    <label for="isDealed"></label><select class="form-control edited" style="font-size: 15px" id="isDealed">
+                                    <option value="yes">已处理</option>
+                                    <option value="no" selected>未处理</option>
+                                </select>
+                                </div>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">该申请的处理日期(dealDate)</label>
+                            <div class="col-md-9">
+                                <label for="dealDate"></label><input type="date" style="font-size: 20px" id="dealDate"/>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <div style="height: 50px"></div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="button" class="btn red" id="modifyRecordFormSubmit"><i class="fa fa-check"></i> Submit</button>
+                                    <button type="button" class="btn default" onclick="window.location.reload()">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pos" style="height: 50px"></div>
+                    </form>
+                </div>
+            </div>
+            <!-- END PORTLET-->
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
+<script>
+    // 完成了打印，导出，统计，处理申请，完成了查看所有申请、查看已处理申请、查看未处理申请，完成了删除申请
+    // 需要完成修改操作，查询操作
+    let type=this.location.search;
+    let data=type.split("sort=");
+    let sort=data[1];
+    let permissionArray=['系统管理员','普通管理员','普通用户'];
+
+    // 页面初始化
+    function init(){
+        setOnclick();
+        initDataTable();
+    }
+
+
+    // 设置全局监听
+    function setOnclick(){
+        $(".sure").click(function (){
+            $(".tip").fadeOut(100);
+        });
+        // 2.弹窗的取消
+        $(".cancel").click(function (){
+            $(".tip").fadeOut(100);
+        });
+        $(".tiptop a").click(function (){
+            $(".tip").fadeOut(100);
+        });
+    }
+
+    let size=1;
+    document.getElementById("apply1").onclick=function (){
+        if(size!=1){
+            document.getElementById("apply2").classList.remove("active");
+            document.getElementById("apply3").classList.remove("active");
+            document.getElementById("apply1").classList.add("active");
+            size=1;
+            initDataTable()
+        }
+    }
+
+    document.getElementById("apply2").onclick=function (){
+        if(size!=2){
+            document.getElementById("apply1").classList.remove("active");
+            document.getElementById("apply3").classList.remove("active");
+            document.getElementById("apply2").classList.add("active");
+            size=2;
+            initDataTable();
+        }
+    }
+
+
+    document.getElementById("apply3").onclick=function (){
+        if(size!=3){
+            document.getElementById("apply1").classList.remove("active");
+            document.getElementById("apply2").classList.remove("active");
+            document.getElementById("apply3").classList.add("active");
+            size=3;
+            initDataTable();
+        }
+    }
+
+
+    // 初始化权限申请表
+    function initDataTable(){
+        resultList=[];
+        $('.datatable').dataTable({
+            "paging": true,
+            "searching": true,
+            "destroy":true,
+            "oLanguage": {
+                "aria": {
+                    "sortAscending": ": activate to sort column ascending",
+                    "sortDescending": ": activate to sort column descending"
+                },
+                "sProcessing": "处理中...",
+                "sLengthMenu": "_MENU_ 记录/页",
+                "sZeroRecords": "没有匹配的记录",
+                "sInfo": "显示第 _START_ 至 _END_ 项记录，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项记录，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项记录过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "查询:",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                }
+            },
+            "aoColumns": [{
+                "mRender": function (data, type, full) {
+                    sReturn = '<input type="checkbox" class="checkboxes" value="' + data + '"/>';
+                    return sReturn;
+                }, "orderable": false
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.applyAccount+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.mail+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+permissionArray[full.oldLevel]+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+permissionArray[full.applyLevel]+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.applyDate+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn ="<div>"+full.isDealed+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.dealDate+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.dealManageAccount+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+permissionArray[full.dealManageLevel]+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.dealResult+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn ="<span class='label label-sm label-default'><a style='color: whitesmoke' href='javascript:modifyPermissionApply("+full.applyUserId+")'>修改申请</a></span>"
+                    sReturn+="<span class='label label-sm label-warning'><a style='color: whitesmoke' href='javascript:deletePermissionApply("+full.applyUserId+")'>删除申请</a></span>"
+                    return sReturn;
+                }, "orderable": false
+            },{
+                "mRender": function (data, type, full) {
+                    resultList.push(full);
+                    let flag=-1;
+                    if(full.isDealed=="yes"){
+                        flag=1;
+                    }else{
+                        flag=0;
+                    }
+                    sReturn="<span class='label label-sm label-danger'><a style='color: whitesmoke' href='javascript:refusePermissionApply("+full.applyUserId+","+flag+")'>拒绝申请</a></span>"
+                    sReturn+="<span class='label label-sm label-success'><a style='color: whitesmoke' href='javascript:agreePermissionApply("+full.applyUserId+","+flag+","+full.applyLevel+")'>允许申请</a></span>"
+                    return sReturn;
+                }, "orderable": false
+            }
+            ],
+            "aLengthMenu": [[5, 10, 15, 20, 25, 40, 50, -1], [5, 10, 15, 20, 25, 40, 50, "所有记录"]],
+            "fnDrawCallback": function () {
+                $(".checkboxes").uniform();
+                $(".group-checkable").uniform();
+            },
+            "sAjaxSource": "../../Login_ServletAction?Action=getApplyPermission&applyUserId=_&type=_&size="+size
+        });
+
+        $('.datatable').find('.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                    $(this).parents('tr').addClass("active");
+                } else {
+                    $(this).attr("checked", false);
+                    $(this).parents('tr').removeClass("active");
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+        $('.datatable').on('change', 'tbody tr .checkboxes', function () {
+            $(this).parents('tr').toggleClass("active");
+        });
+    };
+
+    // 拒绝申请
+    function refusePermissionApply(applyUserId,isDealed){
+        if(isDealed==1){
+            alert("当前请求已被处理，不可重复处理!");
+            return;
+        }
+        let url="../../Login_ServletAction";
+        let message={};
+        message.Action="dealPermissionApply";
+        message.operator="拒绝申请";
+        message.dealManageAccount=sessionStorage.getItem("account");
+        message.dealManageLevel=sessionStorage.getItem("level");
+        message.applyUserId=applyUserId;
+        if(confirm("您确定要拒绝该用户的权限申请吗?")){
+            $.post(url,message,function (json){
+                if(json.ok==200){
+                    alert("操作成功!");
+                    initDataTable();
+                }else{
+                    alert("操作失败!");
+                }
+            });
+        }
+    }
+
+    // 允许申请,注意需要将修改同步到权限修改记录表
+    function agreePermissionApply(applyUserId,isDealed,applyLevel){
+        if(isDealed==1){
+            alert("当前申请已被处理，不可重复处理!");
+            return;
+        }
+        let url="../../Login_ServletAction";
+        let message={};
+        message.Action="dealPermissionApply";
+        message.operator="允许申请";
+        message.dealManageAccount=sessionStorage.getItem("account");
+        message.dealManageLevel=sessionStorage.getItem("level");
+        message.applyUserId=applyUserId;
+        message.applyLevel=applyLevel;
+        if(confirm("您确定要允许该用户的权限申请吗?")){
+            $.post(url,message,function (json){
+                if(json.ok==200){
+                    alert("操作成功!");
+                    initDataTable();
+                }else{
+                    alert("操作失败!");
+                }
+            });
+        }
+    }
+
+    // 打印用户权限申请
+    document.getElementById("printBtn").onclick=function (){
+        window.open("print/printDealApplyPermission.html");
+    }
+
+    // 导出权限申请表
+    document.getElementById("exportBtn").onclick=function (){
+        alert("开始导出");
+        let url="../../Login_ServletAction";
+        let message={};
+        message.Action="exportFile";
+        message.tableName="applyPermissionInfo";
+        message.tag=Math.random();
+        console.log(message)
+        $.post(url,message,function (json){
+            if(json.ok==200){
+                alert("导出成功!");
+                document.getElementById("flag").innerText="导出成功!";
+                $("#txtDownLoadHref").attr("href",json.txtDownloadPath);
+                $("#excelDownLoadHref").attr("href",json.excelDownloadPath);
+                $("#pdfDownLoadHref").attr("href",json.pdfDownloadPath);
+                $("#csvDownLoadHref").attr("href",json.csvDownloadPath);
+                document.getElementById("tip").style.display="block";
+            }
+        })
+    }
+
+    // 统计申请信息
+    document.getElementById("staticBtn").onclick=function (){
+        window.location.href="../statistic/statisticApplyPermissionInfo.html";
+    }
+
+    // 删除用户申请记录
+    function deletePermissionApply(applyUserId){
+        let url="../../Login_ServletAction";
+        let message={};
+        message.Action="cancelPermissionApply";
+        message.applyUserId=applyUserId;
+        message.flag="sure";
+        if(confirm("您确定要删除该权限申请记录吗?")){
+            $.post(url,message,function (json){
+                if(json.ok==200){
+                    alert("删除成功!");
+                    window.location.reload();
+                }else{
+                    alert("删除失败!")
+                }
+            })
+        }
+    }
+
+    // 修改用户权限申请
+    let ID;
+    let pos;
+    function modifyPermissionApply(id){
+        ID=id;
+        for(let i=0;i<resultList.length;i++){
+            if(id==resultList[i].applyUserId){
+                pos=i;
+                document.getElementById("userAccount").innerText=resultList[i].applyAccount;
+                document.getElementById("userMail").innerText=resultList[i].mail;
+                $("#oldPermission").val(resultList[i].oldLevel);
+                $("#newPermission").val(resultList[i].applyLevel);
+                $("#applyDate").val(resultList[i].applyDate);
+                $("#isDealed").val(resultList[i].isDealed);
+                $("#dealDate").val(resultList[i].dealDate);
+                break;
+            }
+        }
+        document.getElementById("modifyRecordForm").style.display="block";
+        $("html,body").animate({scrollTop:$("#modifyRecordForm").offset().top},1000);
+    }
+
+    // 提交修改
+    document.getElementById("modifyRecordFormSubmit").onclick=function (){
+        if(resultList[pos].isDealed=="no" && document.getElementById("isDealed").value=="yes"){
+            alert("未被处理的申请不可直接被修改为已处理的申请!");
+            return;
+        }
+        if(confirm("您确定要修改该申请吗?")){
+            let url="../../Login_ServletAction";
+            let message={};
+            message.Action="modifyApplyPermissionRecord";
+            message.applyUserId=ID;
+            message.oldLevel=document.getElementById("oldPermission").value;
+            message.applyLevel=document.getElementById("newPermission").value;
+            message.applyDate=document.getElementById("applyDate").value;
+            message.isDealed=document.getElementById("isDealed").value;
+            message.dealDate=document.getElementById("dealDate").value;
+            console.log(message);
+            $.post(url,message,function (json){
+                if(json.ok==200){
+                    alert("修改成功!");
+                    initDataTable();
+                    $("html,body").animate({scrollTop:$("#record_list").offset().top},1000);
+                }else{
+                    alert("修改失败!");
+                }
+            })
+
+        }
+    }
+
+
+
+</script>
+</html>

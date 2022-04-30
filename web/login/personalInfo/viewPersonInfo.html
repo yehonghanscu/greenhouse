@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查看个人信息</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <link href="../assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/admin/layout/css/layout.css" rel="stylesheet" type="text/css"/>
+<!--    <link id="style_color" href="../assets/admin/layout/css/themes/darkblue.css" rel="stylesheet" type="text/css"/>-->
+    <link href="../assets/admin/layout/css/custom.css" rel="stylesheet" type="text/css"/>
+
+</head>
+<script language="JavaScript" src="../../js/jquery.js" type=""></script>
+<body onload="init()">
+<div class="row">
+    <div class="col-md-12" style="position: relative; height: 100%;width: 85%; left: 15px; top:15px">
+        <!-- BEGIN PORTLET-->
+        <div class="portlet light bordered form-fit">
+            <div class="portlet-title">
+                <div class="caption font-blue">
+                    <i class="icon-speech font-blue"></i>
+                    <span class="caption-subject bold uppercase"> 个人信息</span>
+                    <span class="caption-helper"></span>
+                </div>
+                <div class="actions">
+                    <a href="javascript:modifyPersonInfo();" class="btn btn-circle btn-default btn-sm">
+                        <i class="fa fa-pencil"></i> 修改 </a>
+                    <a class="btn btn-circle btn-icon-only btn-default" href="javascript:;">
+                        <i class="icon-wrench"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <form id="form-username" class="form-horizontal form-bordered">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">用户名(account)</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control autosizeme" rows="1" placeholder="..." id="userAccount" readonly></textarea>
+                            <p class="help-block" id="personAccount">
+                                type more to see how this autosize feature works
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">用户级别</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control autosizeme" rows="1" placeholder="..."id="userLevel" readonly></textarea>
+                            <p class="help-block" id="personLevel">
+                                type more to see how this autosize feature works
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">用户邮箱(mail)</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control autosizeme" rows="1" placeholder="..." id="userMail" readonly></textarea>
+                            <p class="help-block" id="personMail">
+                                type more to see how this autosize feature works
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">用户姓名(userName)</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control autosizeme" rows="1" placeholder="..." id="userName" readonly></textarea>
+                            <p class="help-block" id="personName">
+                                type more to see how this autosize feature works
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">用户性别(usrGender)</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control autosizeme" rows="1" placeholder="..." id="userGender" readonly></textarea>
+                            <p class="help-block" id="personGender">
+                                type more to see how this autosize feature works
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">注册日期(signUpDate)</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control autosizeme" rows="1" placeholder="..." id="signUpDate" readonly></textarea>
+                            <p class="help-block" id="signUpDateTip">
+                                type more to see how this autosize feature works
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">最后登录日期(lastLoginDate)</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control autosizeme" rows="1" placeholder="..." id="lastLoginDate" readonly></textarea>
+                            <p class="help-block" id="lastLoginDateTip">
+                                type more to see how this autosize feature works
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">最后修改日期(lastModifyDate)</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control autosizeme" rows="1" placeholder="..." id="lastModifyDate" readonly></textarea>
+                            <p class="help-block" id="lastModifyDateTip">
+                                type more to see how this autosize feature works
+                            </p>
+                        </div>
+                    </div>
+                    <div style="height: 50px"></div>
+                    <div class="form-actions" style="display: none" id="submitAndcancel">
+                        <div class="row">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button type="button" class="btn red" id="modifySubmit"><i class="fa fa-check"></i> Submit</button>
+                                <button type="button" class="btn default" onclick="window.location.reload()">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="pos" style="height: 50px"></div>
+                </form>
+            </div>
+        </div>
+        <!-- END PORTLET-->
+    </div>
+</div>
+
+</body>
+<script>
+    function init(){
+        let userId=sessionStorage.getItem("userId");
+        let url="../../Login_ServletAction";
+        let message={};
+        message.Action="getPersonInfo";
+        message.userId=userId;
+        $.post(url,message,function (json){
+            console.log(json);
+            if(json.ok==200){
+                initInfo(json);
+            }else{
+                alert("获取个人信息失败!");
+            }
+        })
+    }
+
+    // 修改个人信息
+    function modifyPersonInfo(){
+        document.getElementById("submitAndcancel").style.display="block";
+        document.getElementById("pos").style.display="block";
+        document.getElementById("userAccount").readOnly=false;
+        document.getElementById("userName").readOnly=false;
+        document.getElementById("userGender").readOnly=false;
+        document.getElementById("personAccount").innerText="输入修改后的用户名...";
+        document.getElementById("personName").innerText="输入修改后的用户姓名...";
+        document.getElementById("personGender").innerText="输入修改后的性别信息(男/女)...";
+    }
+
+    function initInfo(json){
+        document.getElementById("userAccount").innerText=json.Data[0].account;
+        document.getElementById("userMail").innerText=json.Data[0].mail;
+        document.getElementById("signUpDate").innerText=json.Data[0].signUpDate;
+        document.getElementById("lastLoginDate").innerText=json.Data[0].lastLoginDate;
+        document.getElementById("lastModifyDate").innerText=json.Data[0].lastModifyDate;
+        document.getElementById("userName").innerText=json.Data[0].userName;
+        document.getElementById("userGender").innerText=json.Data[0].userGender;
+        let level=sessionStorage.getItem("level");
+        if(level==0){
+            document.getElementById("userLevel").innerText="系统管理员";
+        }else if(level==1){
+            document.getElementById("userLevel").innerText="普通管理员";
+        }else{
+            document.getElementById("userLevel").innerText="普通用户";
+        }
+    }
+
+    document.getElementById("modifySubmit").onclick=function (){
+        let url="../../Login_ServletAction";
+        let account=document.getElementById("userAccount").value;
+        let userName=document.getElementById("userName").value;
+        let userGender=document.getElementById("userGender").value;
+        if(userGender!="男" && userGender!="女"){
+            alert("请输入正确的性别信息!");
+            return;
+        }
+        let message={};
+        message.Action="modifyPersonInfo";
+        message.userId=sessionStorage.getItem("userId");
+        message.account=account;
+        message.username=userName;
+        message.userGender=userGender;
+        console.log(message)
+        if(confirm("您确定要修改自己的个人信息？")){
+            $.post(url,message,function (json){
+                if(json.ok==200){
+                    alert("修改成功!");
+                    window.location.reload();
+                }else if(json.ok==404){
+                    alert("修改失败，修改后的用户名已经存在!");
+                    window.location.reload();
+                }
+            })
+        }
+    }
+
+
+</script>
+</html>

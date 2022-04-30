@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<script language="JavaScript" src="../js/jquery.js" type=""></script>
+<head>
+    <meta charset="UTF-8">
+    <title>staticApplyInfo</title>
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css"/>
+    <link href="../css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body onload="init()" style="position:relative; width: 100%; height: 100%;">
+<div class="tools">
+    <ul class="toolbar">
+        <li onclick="window.location.href='checkDataTable.html'"><img src="../images/back.png" />返回</li>
+    </ul>
+</div>
+<div id="main" style="position:relative; width: 88%; height: 500px;"></div>
+</body>
+
+<script type="text/javascript">
+
+    function init(){
+        let url="../Login_ServletAction";
+        let message={};
+        message.Action="statisticsApplyInfo";
+        $.post(url,message,function (json){
+            if(json.ok===200){
+                console.log(json);
+                initTable(json);
+            } else {
+                alert("统计失败!");
+            }
+        });
+    }
+
+    function initTable(json){
+        let myChart = echarts.init(document.getElementById('main'));
+        const option = {
+            color: ['#30c4de'],
+            title: {
+                text: 'ApplyInfo Statistic/待审核用户申请注册信息统计'
+            },
+            tooltip: {},
+            legend: {
+                data: ['统计信息']
+            },
+            xAxis: {
+                data: ["目前申请用户数量", "今日申请数量","昨日申请数量", "近一周申请数量", "近一月申请数量"]
+            },
+            yAxis: {},
+            series: [{
+                name: '申请统计信息',
+                type: 'bar',
+                data: [json.applyCount, json.todayCount, json.dayCount, json.weekCount, json.monCount]
+            }]
+        };
+        myChart.setOption(option);
+    }
+</script>
+</html>

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>天气</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <link href="../assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/admin/layout/css/layout.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/admin/layout/css/custom.css" rel="stylesheet" type="text/css"/>
+</head>
+<link rel="stylesheet" type="text/css" href="../../css/dataTables.bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css"/>
+<link href="../../css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../js/jquery.min.js"></script>
+
+<body onload="init()">
+<div  style="position: relative; width: 30%;height: 250px; float: left;left: 0">
+    <div class="portlet blue box">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-cogs"></i>实时天气
+            </div>
+        </div>
+        <div class="portlet-body">
+        <iframe scrolling="no" src="https://tianqiapi.com/api.php?style=ya&skin=pitaya" frameborder="0" height="200" allowtransparency="true" style="position:relative;width: 100%;"></iframe>
+        </div>
+    </div>
+</div>
+
+<div  style="position: relative; width: 70%;height: 250px; float: right;left: 0">
+    <div class="portlet blue box">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-cogs"></i>天气预报
+            </div>
+        </div>
+        <div class="portlet-body">
+            <iframe scrolling="no" src="https://tianqiapi.com/api.php?style=ts&skin=pitaya" frameborder="0" height="200" width="600" allowtransparency="true" style="position:relative;"></iframe>
+        </div>
+    </div>
+</div>
+<div  style="position: relative; width: 100%;height: 50px; float: left; ">
+    <div class="portlet blue box">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="fa fa-cogs"></i>查看天气信息
+            </div>
+        </div>
+    </div>
+</div>
+<!--toolBar-->
+<div class="rightinfo">
+
+    <div class="tools">
+
+        <ul class="toolbar">
+            <li onclick="window.location.href='feedbackStatistics.html'"><img src="../../images/t04.png" />统计</li>
+            <li onclick="Export()"><img src="../../images/export.png" />导出</li>
+            <li onclick="Print()"><img src="../../images/print.png" />打印</li>
+            <li onclick="Order()"><img src="../../images/sort.png" />排序</li>
+        </ul>
+
+
+    </div>
+    <div style="position: relative; width: 88%">
+        <table class="table table-striped table-bordered table-hover datatable" id="record_list">
+            <thead>
+            <tr>
+                <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#record_list .checkboxes" /></th>
+                <th>城市</th>
+                <th>日期</th>
+                <th>星期</th>
+                <th>天气</th>
+                <th>最高温度</th>
+                <th>最低温度</th>
+                <th>空气质量</th>
+                <th>风速</th>
+                <th>湿度</th>
+                <th>待办事项</th>
+                <th>填写操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div class="tip" id="tip">
+        <div class="tiptop"><span>提示信息</span><a></a></div>
+
+        <div class="tipinfo">
+            <span><img src="../../images/tip.png" /></span>
+            <div class="tipright">
+                <p id="flag"></p>
+                <cite><a href="" id="txtDownLoadHref">[点击下载txt]</a></cite>
+                <cite><a href="" id="excelDownLoadHref">[点击下载excel]</a></cite>
+            </div>
+        </div>
+    </div>
+
+    <div style="position: relative; height: 50px"></div>
+    <div class="row" id="addTodoListForm" style="display: none">
+        <div class="col-md-12" style="position: relative; height: 500px;width: 100%;">
+            <div  style="position: relative; width: 100%;">
+                <div class="portlet blue box">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs"></i>增加待办事项
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- BEGIN PORTLET-->
+
+            <div class="portlet-body form">
+                <form action="#" id="username" class="form-horizontal form-bordered">
+                    <div class="form-group">
+                    </div>
+                    <div class="form-group last">
+                        <label class="col-md-1 control-label">待办事项</label>
+                        <div class="col-md-11">
+                            <textarea class="form-control" rows="6" placeholder="请输入待办事项... " id="addTodoList"></textarea>
+                            <p class="help-block">
+                                请在 <code>方框内</code> 输入待办事项
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="row">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button type="button" class="btn red" onclick="Submit()">提交</button>
+                                <button type="button" class="btn default" onclick="window.location.reload()">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- END PORTLET-->
+    </div>
+    <!--    修改反馈-->
+    <div class="row" id="modifyTodoListForm" style="display: none">
+        <div class="col-md-12" style="position: relative; height: 500px;width: 100%;">
+            <div  style="position: relative; width: 100%;">
+                <div class="portlet blue box">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs"></i>修改待办事项
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- BEGIN PORTLET-->
+
+            <div class="portlet-body form">
+                <form action="#" id="form-username" class="form-horizontal form-bordered">
+                    <div class="form-group">
+                    </div>
+                    <div class="form-group last">
+                        <label class="col-md-1 control-label">待办事项</label>
+                        <div class="col-md-11">
+                            <textarea class="form-control" rows="6" placeholder="请输入待办事项... " id="modifyTodoList"></textarea>
+                            <p class="help-block">
+                                请在 <code>方框内</code> 输入待办事项
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="row">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button type="button" class="btn red" onclick="SubmitModify()">提交修改</button>
+                                <button type="button" class="btn default" onclick="window.location.reload()">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- END PORTLET-->
+    </div>
+
+</div>
+<div style="position:relative; height: 150px;" id="tag"></div>
+
+
+</body>
+
+<script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
+
+<script>
+    // 注意getWeather()中的result.data中存有alarm信息，可以作为预警信息
+    let message={};
+    let resultList=[];
+    function init(){
+        getWeather();
+    }
+    function initTable(){
+        // let account=sessionStorage.getItem("account")
+        resultList=[];
+        $('.datatable').dataTable({
+            "paging": true,
+            "searching": true,
+            "oLanguage": {
+                "aria": {
+                    "sortAscending": ": activate to sort column ascending",
+                    "sortDescending": ": activate to sort column descending"
+                },
+                "sProcessing": "处理中...",
+                "sLengthMenu": "_MENU_ 记录/页",
+                "sZeroRecords": "没有匹配的记录",
+                "sInfo": "显示第 _START_ 至 _END_ 项记录，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项记录，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项记录过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "查询:",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                }
+            },
+            "aoColumns": [{
+                "mRender": function (data, type, full) {
+                    resultList.push(full);
+                    sReturn = '<input type="checkbox" class="checkboxes" value="' + data + '"/>';
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.city+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.day+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.week+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn ="<div>"+full.wea+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.hightem+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.lowtem+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.airLevel+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.winSpeed+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.humidity+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                    "mRender": function (data, type, full) {
+                        if(full.todoList==null){
+                            sReturn = "<div>null</div>";
+                        }else{
+                            sReturn = "<div>"+full.todoList+"</div>";
+                        }
+                        return sReturn;
+                    }, "orderable": true
+                },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<a href=\"javascript:AddTodoList("+full.id+")\">【增加待办事项】</a><a href=\"javascript:ModifyTodoList("+full.id+")\">【修改待办事项】</a><a href=\"javascript:DeleteFeedBack(" + full.id + ")\">【删除待办事项】</a>";
+                    return sReturn;
+                }, "orderable": true
+            }],
+            "aLengthMenu": [[5, 10, 15, 20, 25, 40, 50, -1], [5, 10, 15, 20, 25, 40, 50, "所有记录"]],
+            "fnDrawCallback": function () {
+                $(".checkboxes").uniform();
+                $(".group-checkable").uniform();
+            },
+            "sAjaxSource": "../../Device_ServletAction?Action=getWeatherRecord"
+        });
+        $('.datatable').find('.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                    $(this).parents('tr').addClass("active");
+                } else {
+                    $(this).attr("checked", false);
+                    $(this).parents('tr').removeClass("active");
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+        $('.datatable').on('change', 'tbody tr .checkboxes', function () {
+            $(this).parents('tr').toggleClass("active");
+        });
+    }
+
+    function getWeather() {
+        $.getJSON('https://www.tianqiapi.com/api/?version=v9&appid=23035354&appsecret=8YvlPNrz', function (result) {
+            // console.log(result)
+            message.city=result.city;
+            message.day=result.data[0].date;
+            message.week=result.data[0].week;
+            message.wea=result.data[0].wea;
+            message.hightem=result.data[0].tem1;
+            message.lowtem=result.data[0].tem2;
+            message.airLevel=result.data[0].air_level;
+            message.winSpeed=result.data[0].win_speed;
+            message.humidity=result.data[0].humidity;
+            saveWeather();
+        })
+    }
+
+    function saveWeather(){
+        let url="../../Device_ServletAction";
+        message.Action="saveWeather";
+        console.log(message)
+        $.post(url, message, function (json){
+            if(json.ok==200){
+                alert("保存成功!");
+                initTable();
+            }else{
+                alert("保存失败");
+            }
+        })
+
+    }
+
+    function Export() {
+        // 建议JAVA后端查询得到的JSON直接导出，而不是前端向后端传递JSON再导出
+        let message = {};
+        let url = "../../Device_ServletAction"
+        message.Action = "exportFile";
+        message.tableName='feedbackinfo';
+        $.post(url, message, function (json) {
+            if (json.ok === 200) {
+                tip.style.display="block";
+                document.getElementById("flag").innerText="导出成功!";
+                $("#txtDownLoadHref").attr("href",json.txtDownloadPath);
+                $("#excelDownLoadHref").attr("href",json.excelDownloadPath);
+            } else {
+                alert("导出失败！")
+            }
+        });
+    }
+
+    function Print(){
+        window.open("feedbackPrint.html");
+    }
+    function Order() {
+        alert("点击表头进行排序")
+    }
+    function Search() {
+        alert("点击过滤进行查询")
+    }
+    function AddTodoList(){
+        document.getElementById("addTodoListForm").style.display="block";
+    }
+    function ModifyTodoList(){
+        document.getElementById("modifyTodoListForm").style.display="block";
+        // document.getElementById("tag").style.display="block";
+        // for(let i=0;i<resultList.length;i++){
+        //     if(id==resultList[i].id){
+        //         document.getElementById("feedback").innerText=resultList[i].feedBackContent;
+        //         modifyAccount=resultList[i].feedbackAccount
+        //     }
+        // }
+    }
+
+    function SubmitModify(){
+
+        let todoList=document.getElementById("modifyTodoList").value;
+        let message={};
+        message.Action="SubmitModify";
+        message.todoList=todoList;
+        let url="../../Device_ServletAction";
+        $.post(url,message,function(json){
+            if(json.ok===200){
+                // 重新加载页面
+                alert("修改成功!");
+                window.location.reload();
+            }else{
+                alert("提交加失败，请确定联网，稍后重试!");
+            }
+        })
+
+    }
+
+
+</script>
+
+</html>

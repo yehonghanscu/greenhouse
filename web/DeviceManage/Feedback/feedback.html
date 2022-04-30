@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <link href="../assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/admin/layout/css/layout.css" rel="stylesheet" type="text/css"/>
+<!--    <link id="style_color" href="../assets/admin/layout/css/themes/darkblue.css" rel="stylesheet" type="text/css"/>-->
+    <link href="../assets/admin/layout/css/custom.css" rel="stylesheet" type="text/css"/>
+</head>
+<body onload="init()">
+<div class="row">
+    <div class="col-md-12" style="position: relative; height: 100%;width: 90%;left: 25px; top:25px">
+        <div  style="position: relative; width: 100%;">
+            <div class="portlet blue-hoki box">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-cogs"></i>个人信息
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="row static-info">
+                        <div class="col-md-5 name">
+                            用户名:
+                        </div>
+                        <div class="col-md-7 value" id="FeedBackAccount"></div>
+                    </div>
+                    <div class="row static-info">
+                        <div class="col-md-5 name">
+                            邮箱:
+                        </div>
+                        <div class="col-md-7 value" id="FeedBackMail"></div>
+                    </div>
+                    <div class="row static-info">
+                        <div class="col-md-5 name">
+                            用户级别:
+                        </div>
+                        <div class="col-md-7 value" id="FeedBackLevel"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- BEGIN PORTLET-->
+
+        <div class="portlet light bordered form-fit">
+            <div class="portlet-title">
+                <!--反馈信息-->
+<!--                <div class="portlet box blue">-->
+                <div class="caption font-blue">
+                    <i class="icon-speech font-blue"></i>
+                    <span class="caption-subject bold uppercase"> 反馈信息</span>
+                    <span class="caption-helper"></span>
+                </div>
+            </div>
+
+
+
+            <div class="portlet-body">
+                    <ul class="nav nav-pills">
+                        <li class="active" id="feedback1">
+                            <a href="#tab_2_1" data-toggle="tab">
+                                反馈系统信息 <i class="fa fa-angle-down"></i>
+                            </a>
+                        </li>
+                        <li id="feedback2">
+                            <a href="#tab_2_2" data-toggle="tab">
+                                反馈设备信息 <i class="fa fa-angle-down"></i>
+                            </a>
+                        </li>
+                        <li class="dropdown" id="feedback3">
+                            <a href="javascript:;" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">
+                                反馈用户信息 <i class="fa fa-angle-down"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            <div class="portlet-body form">
+                <form action="#" id="form-username" class="form-horizontal form-bordered">
+                    <div class="form-group">
+                    </div>
+                    <div class="form-group last">
+                        <label class="col-md-1 control-label">反馈内容</label>
+                        <div class="col-md-11">
+                            <textarea class="form-control" rows="6" placeholder="请输入反馈... " id="feedback"></textarea>
+                            <p class="help-block">
+                                请在 <code>方框内</code> 输入反馈信息
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <div class="row">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button type="button" class="btn red" onclick="Submit()">提交反馈</button>
+                                <button type="button" class="btn default" onclick="window.location.reload()">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- END PORTLET-->
+    </div>
+</div>
+</body>
+
+<script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
+
+<script>
+    function init(){
+        let account=sessionStorage.getItem("account");
+        let userLevel=sessionStorage.getItem("level");
+        let mail=sessionStorage.getItem("mail");
+        document.getElementById("FeedBackAccount").innerText=account;
+        document.getElementById("FeedBackMail").innerText=mail;
+        if(userLevel==0){
+            userLevel="系统管理员";
+        }else if(userLevel==1){
+            userLevel="普通管理员";
+        }else{
+            userLevel="普通用户"
+        }
+        document.getElementById("FeedBackLevel").innerText=userLevel;
+    }
+    let type=1;
+    document.getElementById("feedback1").onclick=function (){
+        type=1;
+        document.getElementById("feedback2").classList.remove("active");
+        document.getElementById("feedback3").classList.remove("active");
+        document.getElementById("feedback1").classList.add("active");
+        alert("反馈系统信息")
+    }
+
+    document.getElementById("feedback2").onclick=function (){
+        type=2;
+        document.getElementById("feedback1").classList.remove("active");
+        document.getElementById("feedback3").classList.remove("active");
+        document.getElementById("feedback2").classList.add("active");
+        alert("反馈设备信息")
+    }
+
+
+    document.getElementById("feedback3").onclick=function (){
+        type=3;
+        document.getElementById("feedback1").classList.remove("active");
+        document.getElementById("feedback2").classList.remove("active");
+        document.getElementById("feedback3").classList.add("active");
+        alert("反馈用户信息")
+    }
+
+    function Submit(){
+        let userId=sessionStorage.getItem("userId");
+        let account=sessionStorage.getItem("account");
+        let feedBackContent=document.getElementById("feedback").value;
+        if(feedBackContent==="" ){
+            alert("请填写完整信息");
+        }
+
+        let message={};
+        message.Action="Submit";
+        message.feedBackContent=feedBackContent;
+        message.feedbackId=userId;
+        message.feedbackAccount=account;
+        message.type=type;
+        let url="../../Device_ServletAction";
+        $.post(url,message,function(json){
+            if(json.ok===200){
+                // 重新加载页面
+                alert("提交成功!");
+                window.location.reload();
+            }else{
+                alert("提交加失败，请确定联网，稍后重试!");
+            }
+        })
+
+    }
+</script>
+
+</html>

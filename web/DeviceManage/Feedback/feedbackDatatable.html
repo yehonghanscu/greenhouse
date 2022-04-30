@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>feedbackDatatable</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <link href="../assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/admin/layout/css/layout.css" rel="stylesheet" type="text/css"/>
+    <!--    <link id="style_color" href="../assets/admin/layout/css/themes/darkblue.css" rel="stylesheet" type="text/css"/>-->
+    <link href="../assets/admin/layout/css/custom.css" rel="stylesheet" type="text/css"/>
+</head>
+<link rel="stylesheet" type="text/css" href="../../css/dataTables.bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css"/>
+<link href="../../css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../js/jquery.min.js"></script>
+
+<body onload="initDataTable()">
+<!--位置div-->
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">查看反馈信息</a></li>
+    </ul>
+</div>
+<!--toolBar-->
+<div class="rightinfo">
+
+    <div class="tools">
+
+        <ul class="toolbar">
+            <li onclick="window.location.href='feedback.html'"><img src="../../images/t01.png" />添加</li>
+            <li onclick="window.location.href='feedbackStatistics.html'"><img src="../../images/t04.png" />统计</li>
+            <li onclick="Export()"><img src="../../images/export.png" />导出</li>
+            <li onclick="Print()"><img src="../../images/print.png" />打印</li>
+            <li onclick="Order()"><img src="../../images/sort.png" />排序</li>
+
+        </ul>
+
+
+    </div>
+    <div style="position: relative; width: 93%">
+        <table class="table table-striped table-bordered table-hover datatable" id="record_list">
+            <thead>
+            <tr>
+                <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#record_list .checkboxes" /></th>
+                <th>用户名</th>
+                <th>反馈类型</th>
+                <th>反馈内容</th>
+                <th>反馈时间</th>
+                <th>反馈状态</th>
+                <th>处理结果</th>
+                <th>处理时间</th>
+                <th>处理人</th>
+                <th>填写操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div class="tip" id="tip">
+        <div class="tiptop"><span>提示信息</span><a></a></div>
+
+        <div class="tipinfo">
+            <span><img src="../../images/tip.png" /></span>
+            <div class="tipright">
+                <p id="flag"></p>
+                <cite><a href="" id="txtDownLoadHref">[点击下载txt]</a></cite>
+                <cite><a href="" id="excelDownLoadHref">[点击下载excel]</a></cite>
+            </div>
+            <div class="tipright">
+                <cite><a href="" id="pdfDownLoadHref">[点击下载pdf]</a></cite>
+                <cite><a href="" id="csvDownLoadHref">[点击下载csv]</a></cite>
+            </div>
+        </div>
+    </div>
+
+    <div style="position: relative; height: 50px"></div>
+    <!--    修改反馈-->
+    <div class="row" id="modifyFeedBackForm" style="display: none">
+        <div class="col-md-12" style="position: relative; height: 100%;width: 90%;left: 25px; top:25px">
+            <div  style="position: relative; width: 100%;">
+                <div class="portlet blue-hoki box">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs"></i>修改反馈信息
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- BEGIN PORTLET-->
+
+            <div class="portlet light bordered form-fit">
+
+                <div class="portlet-body">
+                    <ul class="nav nav-pills">
+                        <li class="active" id="feedback1" onclick="clickFeedBack1()">
+                            <a href="#tab_2_1" data-toggle="tab">
+                                反馈系统信息 <i class="fa fa-angle-down"></i>
+                            </a>
+                        </li>
+                        <li id="feedback2" onclick="clickFeedBack2()">
+                            <a href="#tab_2_2" data-toggle="tab">
+                                反馈设备信息 <i class="fa fa-angle-down"></i>
+                            </a>
+                        </li>
+                        <li class="dropdown" id="feedback3" onclick="clickFeedBack3()">
+                            <a href="javascript:;" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">
+                                反馈用户信息 <i class="fa fa-angle-down"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="portlet-body form">
+                    <form action="#" id="form-username" class="form-horizontal form-bordered">
+                        <div class="form-group">
+                        </div>
+                        <div class="form-group last">
+                            <label class="col-md-1 control-label">反馈内容</label>
+                            <div class="col-md-11">
+                                <textarea class="form-control" rows="6" placeholder="请输入反馈... " id="feedback"></textarea>
+                                <p class="help-block">
+                                    请在 <code>方框内</code> 输入反馈信息
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="button" class="btn red" onclick="Submit()">提交修改</button>
+                                    <button type="button" class="btn default" onclick="window.location.reload()">取消</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- END PORTLET-->
+        </div>
+
+    </div>
+    <div style="position:relative; height: 150px; display: none" id="tag"></div>
+
+
+</div>
+</body>
+<script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
+
+<script>
+
+    function Export() {
+        // 建议JAVA后端查询得到的JSON直接导出，而不是前端向后端传递JSON再导出
+        let message = {};
+        let url = "../../Device_ServletAction"
+        message.Action = "exportOwnFeedBackRecord";
+        message.account=sessionStorage.getItem("account")
+        message.tag=Math.random();
+        $.post(url, message, function (json) {
+            if (json.ok === 200) {
+                tip.style.display="block";
+                document.getElementById("flag").innerText="导出成功!";
+                $("#txtDownLoadHref").attr("href",json.txtDownloadPath);
+                $("#excelDownLoadHref").attr("href",json.excelDownloadPath);
+                $("#pdfDownLoadHref").attr("href",json.pdfDownloadPath);
+                $("#csvDownLoadHref").attr("href",json.csvDownloadPath);
+            } else {
+                alert("导出失败！")
+            }
+        });
+    }
+
+    let resultList=[];
+    function initDataTable(){
+        $(".sure").click(function (){
+            $(".tip").fadeOut(100);
+        });
+        // 2.弹窗的取消
+        $(".cancel").click(function (){
+            $(".tip").fadeOut(100);
+        });
+        $(".tiptop a").click(function (){
+            $(".tip").fadeOut(100);
+        });
+        init();
+        // initModifyFeedBack();
+    }
+    function Print(){
+        window.open("feedbackPrint.html");
+    }
+    function Order() {
+        alert("点击表头进行排序")
+    }
+    function Search() {
+        alert("点击过滤进行查询")
+    }
+    function init(){
+        let account=sessionStorage.getItem("account")
+        resultList=[];
+        $('.datatable').dataTable({
+            "paging": true,
+            "searching": true,
+            "oLanguage": {
+                "aria": {
+                    "sortAscending": ": activate to sort column ascending",
+                    "sortDescending": ": activate to sort column descending"
+                },
+                "sProcessing": "处理中...",
+                "sLengthMenu": "_MENU_ 记录/页",
+                "sZeroRecords": "没有匹配的记录",
+                "sInfo": "显示第 _START_ 至 _END_ 项记录，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项记录，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项记录过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "查询:",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                }
+            },
+            "aoColumns": [{
+                "mRender": function (data, type, full) {
+                    resultList.push(full);
+                    sReturn = '<input type="checkbox" class="checkboxes" value="' + data + '"/>';
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.feedbackAccount+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    let temp;
+                    if(full.type==1){
+                        temp="系统信息";
+                    }else if(full.type==2){
+                        temp="设备信息";
+                    }else{
+                        temp="用户信息";
+                    }
+                    sReturn = "<div>"+temp+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.feedBackContent+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn ="<div>"+full.feedbackTime+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    let temp;
+                    if(full.isDealed==0){
+                        temp="尚未处理";
+                    }else{
+                        temp="已处理"
+                    }
+                    sReturn = "<div>"+temp+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    if(full.dealResult==null){
+                        sReturn = "<div>null</div>";
+                    }else{
+                        sReturn = "<div>"+full.dealResult+"</div>";
+                    }
+
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    if(full.dealTime==null){
+                        sReturn = "<div>null</div>";
+                    }else{
+                        sReturn = "<div>"+full.dealTime+"</div>";
+                    }
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    if(full.dealManageAccount==null){
+                        sReturn = "<div>null</div>";
+                    }else{
+                        sReturn = "<div>"+full.dealManageAccount+"</div>";
+                    }
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<a href=\"javascript:ModifyFeedBack("+full.id+")\">【修改反馈】</a><a href=\"javascript:DeleteFeedBack(" + full.id + ")\">【删除反馈】</a>";
+                    return sReturn;
+                }, "orderable": true
+            }],
+            "aLengthMenu": [[5, 10, 15, 20, 25, 40, 50, -1], [5, 10, 15, 20, 25, 40, 50, "所有记录"]],
+            "fnDrawCallback": function () {
+                $(".checkboxes").uniform();
+                $(".group-checkable").uniform();
+            },
+            "sAjaxSource": "../../Device_ServletAction?Action=getFeedbackRecord&account="+account+"&tag="+1
+        });
+        $('.datatable').find('.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                    $(this).parents('tr').addClass("active");
+                } else {
+                    $(this).attr("checked", false);
+                    $(this).parents('tr').removeClass("active");
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+        $('.datatable').on('change', 'tbody tr .checkboxes', function () {
+            $(this).parents('tr').toggleClass("active");
+        });
+    };
+
+
+    function DeleteFeedBack(id){
+        if(confirm("您确定要删除这条反馈吗？")){
+            if(id>-1){
+                let url="../../Device_ServletAction";
+                let message={};
+                message.Action="deleteInfo";
+                message.id=id;
+                message.tableName="feedbackinfo";
+                $.post(url,message,function(json){
+                    if(json.ok===200){
+                        alert("删除成功");
+                        // 重新加载页面
+                        window.location.reload();
+                    }else{
+                        alert("删除失败，请确定联网，稍后重试!");
+                    }
+                });
+            }
+        }
+    }
+
+    let type=1;
+    let modifyAccount;
+    let status;
+    let Id;
+    function ModifyFeedBack(id){
+        Id=id;
+        document.getElementById("modifyFeedBackForm").style.display="block";
+        document.getElementById("tag").style.display="block";
+        for(let i=0;i<resultList.length;i++){
+            if(id==resultList[i].id){
+                document.getElementById("feedback").innerText=resultList[i].feedBackContent;
+                if(resultList[i].type==1){
+                    clickFeedBack1();
+                }else if(resultList[i].type==2){
+                    clickFeedBack2();
+                }else{
+                    clickFeedBack3();
+                }
+                modifyAccount=resultList[i].feedbackAccount
+                status=resultList[i].isDealed;
+            }
+        }
+    }
+
+    function clickFeedBack1(){
+        type=1;
+        document.getElementById("feedback2").classList.remove("active");
+        document.getElementById("feedback3").classList.remove("active");
+        document.getElementById("feedback1").classList.add("active");
+        // alert("反馈系统信息")
+    }
+
+    function clickFeedBack2(){
+        type=2;
+        document.getElementById("feedback1").classList.remove("active");
+        document.getElementById("feedback3").classList.remove("active");
+        document.getElementById("feedback2").classList.add("active");
+        // alert("反馈设备信息")
+    }
+
+
+    function clickFeedBack3(){
+        type=3;
+        document.getElementById("feedback1").classList.remove("active");
+        document.getElementById("feedback2").classList.remove("active");
+        document.getElementById("feedback3").classList.add("active");
+    }
+
+    function Submit(){
+
+        let feedBackContent=document.getElementById("feedback").value;
+        if(status==1){
+            alert("该反馈已被管理员处理，不可修改!");
+            return;
+        }
+        let message={};
+        message.Action="modifyFeedBack";
+        message.feedBackContent=feedBackContent;
+        message.feedbackAccount=modifyAccount;
+        message.type=type;
+        message.id=Id;
+        let url="../../Device_ServletAction";
+        $.post(url,message,function(json){
+            if(json.ok===200){
+                // 重新加载页面
+                alert("修改成功!");
+                window.location.reload();
+            }else{
+                alert("提交加失败，请确定联网，稍后重试!");
+            }
+        })
+
+    }
+</script>
+</html>

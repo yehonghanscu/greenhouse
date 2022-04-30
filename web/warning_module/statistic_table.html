@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<script language="JavaScript" src="../js/jquery.js" type=""></script>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts 统计</title>
+    <!-- 引入 echarts.js -->
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+</head>
+
+<body onload="init()" style="position:relative; width: 100%; height: 100%;">
+<div id="main" style="position:relative; width: 88%; height: 500px;"></div>
+</body>
+
+<script type="text/javascript">
+
+    function init(){
+        alert("开始统计");
+        let url="../warningModule_file_servlet_action";
+        let message={};
+        message.Action="statisticWarningRecord";
+        $.post(url,message,function (json){
+            if(json.ok===200){
+                console.log(json);
+                let xData=[];
+                let yData=[];
+                for(let i=0;i<json.aaData.length;i++){
+                    xData.push("农业大棚"+json.aaData[i].greenhouse_id);
+                    yData.push(json.aaData[i].warning_num);
+                }
+                console.log(xData);
+                console.log(yData);
+                initTable(xData,yData);
+                alert("统计成功!");
+            } else {
+                alert("统计失败!");
+            }
+        });
+    }
+
+    function initTable(xData,yData){
+        // console.log(json);
+        let myChart = echarts.init(document.getElementById('main'));
+        const option = {
+            color: ['#30c4de'],
+            title: {
+                text: 'UserInfo Statistic/预警信息统计'
+            },
+            tooltip: {},
+            legend: {
+                data: ['预警信息']
+            },
+            xAxis: {
+                type:"category",
+                data: xData
+            },
+            yAxis: {},
+            series: [{
+                name: '预警个数',
+                type: 'bar',
+                data: yData
+            }]
+        };
+        myChart.setOption(option);
+    }
+</script>
+
+</html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>权限修改记录</title>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <link href="../assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/dataTables.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css"/>
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../../js/jquery.min.js"></script>
+
+</head>
+<body onload="init()">
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">用户管理</a></li>
+    </ul>
+</div>
+
+<!--toolBar-->
+<div class="rightinfo">
+    <div class="tools">
+        <ul class="toolbar">
+            <li id="addBtn"><img src="../../images/t01.png" />添加</li>
+            <li id="queryBtn"><img src="../../images/search.png" />查询</li>
+            <li id="exportBtn"><img src="../../images/export.png" />导出</li>
+            <li id="printBtn"><img src="../../images/print.png" />打印</li>
+            <li id="sortBtn"><img src="../../images/sort.png" />排序</li>
+            <li id="staticBtn" onclick="window.location='staticApplyecharts.html'"><img src="../../images/t04.png" />统计</li>
+        </ul>
+
+    </div>
+
+    <div style="position: relative;width: 88%;">
+        <table class="table table-striped table-bordered table-hover datatable" id="record_list">
+            <thead>
+            <tr>
+                <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#record_list .checkboxes" /></th>
+                <th>用户名(account)</th>
+                <th>用户邮箱(mail)</th>
+                <th>注册日期(signUpDate)</th>
+                <th>权限修改日期(modifyDate)</th>
+                <th>原始权限(oldPermission)</th>
+                <th>重定义权限(newPermission)</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div style="position: relative; height: 50px"></div>
+    <!--导出tip-->
+    <div class="tip" id="tip">
+        <div class="tiptop"><span>导出提示</span><a></a></div>
+
+        <div class="tipinfo">
+            <span><img src="../../images/tip.png" /></span>
+            <div class="tipright">
+                <p id="flag"></p>
+                <cite><a href="" id="txtDownLoadHref">[点击下载txt]</a></cite>
+                <cite><a href="" id="excelDownLoadHref">[点击下载excel]</a></cite>
+            </div>
+            <div class="tipright">
+                <cite><a href="" id="pdfDownLoadHref">[点击下载pdf]</a></cite>
+                <cite><a href="" id="csvDownLoadHref">[点击下载csv]</a></cite>
+            </div>
+        </div>
+
+        <!--tip中的button-->
+        <div class="tipbtn">
+            <input name="" type="button" style="visibility: hidden" class="sure" value="确定" />
+            <input name="" type="button" style="position:relative; left: 40%"  class="sure" value="确定" />
+        </div>
+
+    </div>
+
+    <!--增加权限修改记录-->
+    <div class="row" style="display: none" id="addRecordForm">
+        <div class="col-md-12" style="position: relative; height: 100%;width: 85%; left: 15px; top:15px">
+            <!-- BEGIN PORTLET-->
+            <div class="portlet light bordered form-fit">
+                <div class="portlet-title">
+                    <div class="caption font-blue">
+                        <i class="icon-speech font-blue"></i>
+                        <span class="caption-subject bold uppercase" style="position: relative; width: 200px">增加权限修改记录</span>
+                        <span class="caption-helper"></span>
+                    </div>
+                </div>
+                <div class="portlet-body form">
+                    <form class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户名(userAccount)</label>
+                            <div class="col-md-9">
+                                <textarea class="form-control autosizeme" rows="1" placeholder="输入用户名(userAccount)" id="userAccount"></textarea>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户邮箱(userMail)</label>
+                            <div class="col-md-9">
+                                <textarea class="form-control autosizeme" rows="1" placeholder="输入用户邮箱(userMail)" id="userMail"></textarea>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">注册日期(signUpDate)</label>
+                            <div class="col-md-9">
+                                <label for="signUpDate"></label><input type="date" style="font-size: 20px" id="signUpDate"/>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">权限修改日期(ModifyDate)</label>
+                            <div class="col-md-9">
+                                <label for="ModifyDate"></label><input type="date" style="font-size: 20px" id="modifyDate"/>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户原始权限(oldPermission)</label>
+                            <div class="col-md-9">
+                                <div class="form-group form-md-line-input form-md-floating-label" style="position:relative;width: 100%;">
+                                    <label for="oldPermission"></label><select class="form-control edited" style="font-size: 15px" id="oldPermission">
+                                        <option value="2" selected>普通用户</option>
+                                        <option value="1">普通管理员</option>
+                                        <option value="0">系统管理员</option>
+                                    </select>
+                                </div>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户重定义权限(newPermission)</label>
+                            <div class="col-md-9">
+                                <div class="form-group form-md-line-input form-md-floating-label" style="position:relative;width: 100%;">
+                                    <label for="newPermission"></label><select class="form-control edited" style="font-size: 15px" id="newPermission">
+                                        <option value="2" selected>普通用户</option>
+                                        <option value="1">普通管理员</option>
+                                        <option value="0">系统管理员</option>
+                                    </select>
+                                </div>
+                                <p class="help-block">
+                                    type more to see how this autosize feature works
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style="height: 50px"></div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="button" class="btn red" id="addRecordFormSubmit"><i class="fa fa-check"></i> Submit</button>
+                                    <button type="button" class="btn default" onclick="window.location.reload()">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pos" style="height: 50px"></div>
+                    </form>
+                </div>
+            </div>
+            <!-- END PORTLET-->
+        </div>
+    </div>
+
+    <!--修改权限修改记录-->
+    <div class="row" style="display: none" id="modifyRecordForm">
+        <div class="col-md-12" style="position: relative; height: 100%;width: 85%; left: 15px; top:15px">
+            <!-- BEGIN PORTLET-->
+            <div class="portlet light bordered form-fit">
+                <div class="portlet-title">
+                    <div class="caption font-blue">
+                        <i class="icon-speech font-blue"></i>
+                        <span class="caption-subject bold uppercase" style="position: relative; width: 200px">修改权限修改记录</span>
+                        <span class="caption-helper"></span>
+                    </div>
+                </div>
+                <div class="portlet-body form">
+                    <form class="form-horizontal form-bordered">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户名(userAccount)</label>
+                            <div class="col-md-9">
+                                <textarea class="form-control autosizeme" rows="1" placeholder="用户名(userAccount)" id="account"></textarea>
+                                <p class="help-block">
+                                    在此修改权限修改记录中的用户名
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户邮箱(userMail)</label>
+                            <div class="col-md-9">
+                                <textarea class="form-control autosizeme" rows="1" placeholder="用户邮箱(userMail)" id="mail"></textarea>
+                                <p class="help-block" id="personMail">
+                                    在此修改权限修改记录中的用户邮箱
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">注册日期(SignUpDate)</label>
+                            <div class="col-md-9">
+                                <label for="signUpDate"></label><input type="date" style="font-size: 20px" id="Date"/>
+                                <p class="help-block">
+                                    在此处修改用户的注册日期
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">权限修改日期(ModifyDate)</label>
+                            <div class="col-md-9">
+                                <label for="ModifyDate"></label><input type="date" style="font-size: 20px" id="MDate"/>
+                                <p class="help-block">
+                                    在此修改用户权限修改日期
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户原始权限(oldPermission)</label>
+                            <div class="col-md-9">
+                                <div class="form-group form-md-line-input form-md-floating-label" style="position:relative;width: 100%;">
+                                    <label for="oldPermission"></label><select class="form-control edited" style="font-size: 15px" id="MoldPermission">
+                                    <option value="2" selected>普通用户</option>
+                                    <option value="1">普通管理员</option>
+                                    <option value="0">系统管理员</option>
+                                </select>
+                                </div>
+                                <p class="help-block">
+                                    在此修改权限修改记录中用户的原始权限
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户重定义权限(newPermission)</label>
+                            <div class="col-md-9">
+                                <div class="form-group form-md-line-input form-md-floating-label" style="position:relative;width: 100%;">
+                                    <label for="newPermission"></label><select class="form-control edited" style="font-size: 15px" id="MnewPermission">
+                                    <option value="2" selected>普通用户</option>
+                                    <option value="1">普通管理员</option>
+                                    <option value="0">系统管理员</option>
+                                </select>
+                                </div>
+                                <p class="help-block">
+                                    在此修改权限修改记录中用户重定义权限
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style="height: 50px"></div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="button" class="btn red" id="modifyRecordFormSubmit"><i class="fa fa-check"></i> Submit</button>
+                                    <button type="button" class="btn default" onclick="window.location.reload()">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="height: 50px"></div>
+                    </form>
+                </div>
+            </div>
+            <!-- END PORTLET-->
+        </div>
+    </div>
+
+</div>
+</body>
+<script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
+<script>
+    // 完成了打印，导出，统计,add,delete,modify
+    // 需要查询，排序
+    let resultList=[];
+    let sort="";
+    let permissionArray=['系统管理员','普通管理员','普通用户'];
+
+    function init(){
+        setOnclick();
+        initTable();
+    }
+
+    function setOnclick(){
+        $(".sure").click(function (){
+            $(".tip").fadeOut(100);
+        });
+        // 2.弹窗的取消
+        $(".cancel").click(function (){
+            $(".tip").fadeOut(100);
+        });
+        $(".tiptop a").click(function (){
+            $(".tip").fadeOut(100);
+        });
+    }
+
+    function initTable(){
+        resultList=[];
+        $('.datatable').dataTable({
+            "destroy":true,
+            "paging": true,
+            "searching": true,
+            "oLanguage": {
+                "aria": {
+                    "sortAscending": ": activate to sort column ascending",
+                    "sortDescending": ": activate to sort column descending"
+                },
+                "sProcessing": "处理中...",
+                "sLengthMenu": "_MENU_ 记录/页",
+                "sZeroRecords": "没有匹配的记录",
+                "sInfo": "显示第 _START_ 至 _END_ 项记录，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项记录，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项记录过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "查询:",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                }
+            },
+            "aoColumns": [{
+                "mRender": function (data, type, full) {
+                    resultList.push(full)
+                    sReturn = '<input type="checkbox" class="checkboxes" value="' + data + '"/>';
+                    return sReturn;
+                }, "orderable": false
+            }, {
+                "mRender": function (data, type, full) {
+                    // 用户名
+                    sReturn = "<div>"+full.userAccount+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    // 用户邮箱
+                    sReturn = "<div>"+full.userMail+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    // 注册日期
+                    sReturn = "<div>"+full.signUpDate+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    // 权限修改日期
+                    sReturn = "<div>"+full.modifyDate+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    // 原始权限
+                    sReturn = "<div>"+permissionArray[full.oldPermission]+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    // 新权限
+                    sReturn = "<div>"+permissionArray[full.newPermission]+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn ="<span class='label label-sm label-danger'><a style='color: whitesmoke' href='javascript:modifyRecord("+full.id+")'>修改</a></span>";
+                    sReturn+="<span class='label label-sm label-success'><a style='color: whitesmoke' href='javascript:deleteRecord("+full.id+")'>删除</a></span>";
+                    return sReturn;
+                }, "orderable": true
+            }
+            ],
+            "aLengthMenu": [[5, 10, 15, 20, 25, 40, 50, -1], [5, 10, 15, 20, 25, 40, 50, "所有记录"]],
+            "fnDrawCallback": function () {
+                $(".checkboxes").uniform();
+                $(".group-checkable").uniform();
+            },
+            "sAjaxSource": "../../Login_ServletAction?Action=getPermissionModifyRecord&sort="+sort
+        });
+        $('.datatable').find('.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                    $(this).parents('tr').addClass("active");
+                } else {
+                    $(this).attr("checked", false);
+                    $(this).parents('tr').removeClass("active");
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+        $('.datatable').on('change', 'tbody tr .checkboxes', function () {
+            $(this).parents('tr').toggleClass("active");
+        });
+    }
+
+    // 修改
+    let pos;
+    let ID;
+    function modifyRecord(id){
+        ID=id;
+        document.getElementById("addRecordForm").style.display="none";
+        document.getElementById("modifyRecordForm").style.display="block";
+        for(let i=0;i<resultList.length;i++){
+            if(resultList[i].id==id){
+                pos=i;
+                document.getElementById("account").innerText=resultList[pos].userAccount;
+                document.getElementById("mail").innerText=resultList[pos].userMail;
+                $("#Date").val(resultList[pos].signUpDate);
+                $("#MDate").val(resultList[pos].modifyDate);
+                $("#MoldPermission").val(resultList[pos].oldPermission);
+                $("#MnewPermission").val(resultList[pos].newPermission);
+                break;
+            }
+        }
+        $("html,body").animate({scrollTop:$("#modifyRecordForm").offset().top},1000);
+    }
+
+    // 提交修改
+    document.getElementById("modifyRecordFormSubmit").onclick=function (){
+        let url="../../Login_ServletAction";
+        let message={};
+        message.Action="modifyPermissionModifyRecord";
+        message.id=ID;
+        message.userAccount=document.getElementById("account").value;
+        message.userMail=document.getElementById("mail").value;
+        message.signUpDate=document.getElementById("Date").value;
+        message.modifyDate=document.getElementById("MDate").value;
+        message.oldPermission=document.getElementById("MoldPermission").value;
+        message.newPermission=document.getElementById("MnewPermission").value;
+        console.log(message);
+        $.post(url,message,function (json){
+            if(json.ok==200){
+                alert("修改成功!");
+                initTable();
+                $("html,body").animate({scrollTop:$("#record_list").offset().top},1000);
+            }else{
+                alert("修改失败！请确定修改后的用户名存在!");
+            }
+        })
+
+    }
+
+    // 删除权限修改记录
+    function deleteRecord(id){
+        if(confirm("您确定要删除该记录吗？")){
+            let url="../../Login_ServletAction";
+            let message={};
+            message.Action="deletePermissionModifyRecord";
+            message.id=id;
+            $.post(url,message,function (json){
+                if(json.ok==200){
+                    alert("删除成功!");
+                    initTable();
+                }else{
+                    alert("删除失败!");
+                }
+            })
+        }
+    }
+
+    // 打印完成
+    document.getElementById("printBtn").onclick=function (){
+        window.open("print/printPermissionModifyRecord.html");
+    }
+
+    // 导出完成
+    document.getElementById("exportBtn").onclick=function (){
+        alert("开始导出");
+        let url="../../Login_ServletAction";
+        let message={};
+        message.Action="exportFile";
+        message.tableName="permissionModifyInfo";
+        message.tag=Math.random();
+        $.post(url,message,function (json){
+            if(json.ok==200){
+                alert("导出成功!");
+                document.getElementById("flag").innerText="导出成功!";
+                $("#txtDownLoadHref").attr("href",json.txtDownloadPath);
+                $("#excelDownLoadHref").attr("href",json.excelDownloadPath);
+                $("#pdfDownLoadHref").attr("href",json.pdfDownloadPath);
+                $("#csvDownLoadHref").attr("href",json.csvDownloadPath);
+                document.getElementById("tip").style.display="block";
+            }else{
+                alert("导出失败!");
+            }
+        })
+    }
+
+    // 统计
+    document.getElementById("staticBtn").onclick=function (){
+        window.location.href="../statistic/statisticPermissionModifyInfo.html";
+    }
+
+    // 增加用户权限申请记录
+    document.getElementById("addBtn").onclick=function (){
+        document.getElementById("modifyRecordForm").style.display="none";
+        document.getElementById("addRecordForm").style.display="block";
+        $("html,body").animate({scrollTop:$("#addRecordForm").offset().top},1000);
+    }
+
+    // 增加submit
+    document.getElementById("addRecordFormSubmit").onclick=function (){
+        let userAccount=document.getElementById("userAccount").value;
+        let userMail=document.getElementById("userMail").value;
+        let signUpDate=document.getElementById("signUpDate").value;
+        let modifyDate=document.getElementById("modifyDate").value;
+        let oldPermission=document.getElementById("oldPermission").value;
+        let newPermission=document.getElementById("newPermission").value;
+        if(userAccount=="" || userMail=="" || signUpDate=="" || modifyDate==""){
+            alert("请填写完整信息!");
+            return;
+        }
+        if(oldPermission==newPermission){
+            alert("用户权限未修改!");
+            return;
+        }
+        if(confirm("您确定要增加该用户权限修改记录吗?")){
+            let url="../../Login_ServletAction";
+            let message={};
+            message.Action="addPermissionModifyRecord";
+            message.userAccount=userAccount;
+            message.userMail=userMail;
+            message.signUpDate=signUpDate;
+            message.modifyDate=modifyDate;
+            message.oldPermission=oldPermission;
+            message.newPermission=newPermission;
+            $.post(url,message,function (json){
+                if(json.ok==200){
+                    alert("添加成功!");
+                    window.location.reload();
+                }else{
+                    alert("添加失败!请确保该用户存在!");
+                }
+            })
+
+        }
+    }
+
+
+
+</script>
+
+
+</html>

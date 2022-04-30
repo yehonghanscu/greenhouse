@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dealFeedback</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <link href="../assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="../assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+    <link href="../assets/admin/layout/css/layout.css" rel="stylesheet" type="text/css"/>
+    <!--    <link id="style_color" href="../assets/admin/layout/css/themes/darkblue.css" rel="stylesheet" type="text/css"/>-->
+    <link href="../assets/admin/layout/css/custom.css" rel="stylesheet" type="text/css"/>
+</head>
+<link rel="stylesheet" type="text/css" href="../../css/dataTables.bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css"/>
+<link href="../../css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../js/jquery.min.js"></script>
+<style>
+    .SortSure,.SortCancel,.AddSure{
+        width:96px; height:35px; line-height:35px; color:#fff; background:url(../../images/btnbg1.png) repeat-x; font-size:14px; font-weight:bold;border-radius: 3px; cursor:pointer;
+    }
+    .SortCancel{
+        background:url(../../images/btnbg2.png) repeat-x;color:#000;font-weight:normal;
+    }
+    .SortTip {
+        width: 485px;
+        height: 150px;
+        position: absolute;
+        top: 10%;
+        left: 30%;
+        background: #fcfdfd;
+        box-shadow: 1px 8px 10px 1px #9b9b9b;
+        border-radius: 1px;
+        behavior: url(../../js/pie.htc);
+        display: none;
+        z-index: 111111;
+    }
+</style>
+<body onload="initDataTable()">
+<!--位置div-->
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">待办反馈信息</a></li>
+    </ul>
+</div>
+<!--toolBar-->
+<div class="rightinfo">
+
+    <div class="tools">
+
+        <ul class="toolbar">
+            <li onclick="Add()"><img src="../../images/t01.png" />添加</li>
+            <li onclick="window.location.href='feedbackStatistics.html'"><img src="../../images/t04.png" />统计</li>
+            <li onclick="Export()"><img src="../../images/export.png" />导出</li>
+            <li onclick="Print()"><img src="../../images/print.png" />打印</li>
+            <li onclick="Order()"><img src="../../images/sort.png" />排序</li>
+
+        </ul>
+
+    </div>
+    <div style="position: relative; width: 93%">
+        <table class="table table-striped table-bordered table-hover datatable" id="record_list">
+            <thead>
+            <tr>
+                <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#record_list .checkboxes" /></th>
+                <th>反馈用户名</th>
+                <th>反馈类型</th>
+                <th>反馈内容</th>
+                <th>反馈时间</th>
+                <th>反馈状态</th>
+                <th>反馈处理</th>
+                <th>填写操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <div class="tip" id="tip">
+        <div class="tiptop"><span>提示信息</span><a></a></div>
+
+        <div class="tipinfo">
+            <span><img src="../../images/tip.png" /></span>
+            <div class="tipright">
+                <p id="flag"></p>
+                <cite><a href="" id="txtDownLoadHref">[点击下载txt]</a></cite>
+                <cite><a href="" id="excelDownLoadHref">[点击下载excel]</a></cite>
+            </div>
+            <div class="tipright">
+                <cite><a href="" id="pdfDownLoadHref">[点击下载pdf]</a></cite>
+                <cite><a href="" id="csvDownLoadHref">[点击下载csv]</a></cite>
+            </div>
+        </div>
+    </div>
+
+    <div style="position: relative; height: 50px"></div>
+    <!--处理反馈-->
+    <div class="row" id="dealFeedBackForm" style="display: none">
+        <div class="col-md-12" style="position: relative; height: 100%;width: 90%;left: 25px; top:25px">
+            <div  style="position: relative; width: 100%;">
+                <div class="portlet blue-hoki box">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="fa fa-cogs"></i>处理反馈信息
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- BEGIN PORTLET-->
+
+            <div class="portlet light bordered form-fit">
+
+                <div class="portlet-body">
+                    <ul class="nav nav-pills">
+                        <li class="active" id="feedback1">
+                            <a href="#tab_2_1" data-toggle="tab">
+                                反馈系统信息 <i class="fa fa-angle-down"></i>
+                            </a>
+                        </li>
+                        <li id="feedback2" >
+                            <a href="#tab_2_2" data-toggle="tab">
+                                反馈设备信息 <i class="fa fa-angle-down"></i>
+                            </a>
+                        </li>
+                        <li class="dropdown" id="feedback3">
+                            <a href="javascript:;" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">
+                                反馈用户信息 <i class="fa fa-angle-down"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="portlet-body form">
+                    <form action="#" id="form-username" class="form-horizontal form-bordered">
+                        <div class="form-group">
+                        </div>
+                        <div class="form-group last">
+                            <label class="col-md-1 control-label">反馈内容</label>
+                            <div class="col-md-11">
+                                <textarea class="form-control" rows="6" placeholder="请输入反馈... " id="feedback" readonly></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group last">
+                            <label class="col-md-1 control-label">反馈处理</label>
+                            <div class="col-md-11">
+                                <textarea class="form-control" rows="6" placeholder="请输入处理... " id="dealResult"></textarea>
+                                <p class="help-block">
+                                    请在 <code>方框内</code> 输入反馈处理
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button type="button" class="btn red" onclick="Submit()">提交处理结果</button>
+                                    <button type="button" class="btn default" onclick="window.location.reload()">取消</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- END PORTLET-->
+        </div>
+
+    </div>
+    <div style="position:relative; height: 150px; display: none" id="tag"></div>
+
+
+</div>
+</body>
+<script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
+
+<script>
+    let resultList=[];
+    function Add(){
+        alert("点击处理反馈!")
+    }
+    function Export() {
+        // 建议JAVA后端查询得到的JSON直接导出，而不是前端向后端传递JSON再导出
+        let message = {};
+        let url = "../../Device_ServletAction"
+        message.Action = "exportFile";
+        message.tableName='feedbackinfo';
+        $.post(url, message, function (json) {
+            if (json.ok === 200) {
+                tip.style.display="block";
+                document.getElementById("flag").innerText="导出成功!";
+                $("#txtDownLoadHref").attr("href",json.txtDownloadPath);
+                $("#excelDownLoadHref").attr("href",json.excelDownloadPath);
+                $("#pdfDownLoadHref").attr("href",json.pdfDownloadPath);
+                $("#csvDownLoadHref").attr("href",json.csvDownloadPath);
+
+            } else {
+                alert("导出失败！")
+            }
+        });
+    }
+
+    function initDataTable(){
+        $(".sure").click(function (){
+            $(".tip").fadeOut(100);
+        });
+        // 2.弹窗的取消
+        $(".cancel").click(function (){
+            $(".tip").fadeOut(100);
+        });
+        $(".tiptop a").click(function (){
+            $(".tip").fadeOut(100);
+        });
+        init();
+    }
+    function Print(){
+        window.open("feedbackPrint.html");
+    }
+    function Order() {
+        alert("点击表头进行排序")
+    }
+    function Search() {
+        alert("点击过滤进行查询")
+    }
+    function init(){
+        resultList=[]
+        $('.datatable').dataTable({
+            "paging": true,
+            "searching": true,
+            "oLanguage": {
+                "aria": {
+                    "sortAscending": ": activate to sort column ascending",
+                    "sortDescending": ": activate to sort column descending"
+                },
+                "sProcessing": "处理中...",
+                "sLengthMenu": "_MENU_ 记录/页",
+                "sZeroRecords": "没有匹配的记录",
+                "sInfo": "显示第 _START_ 至 _END_ 项记录，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项记录，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项记录过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "查询:",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                }
+            },
+            "aoColumns": [{
+                "mRender": function (data, type, full) {
+                    sReturn = '<input type="checkbox" class="checkboxes" value="' + data + '"/>';
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.feedbackAccount+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    let temp;
+                    if(full.type==1){
+                        temp="系统信息";
+                    }else if(full.type==2){
+                        temp="设备信息";
+                    }else{
+                        temp="用户信息";
+                    }
+                    sReturn = "<div>"+temp+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.feedBackContent+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn ="<div>"+full.feedbackTime+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    let temp;
+                    if(full.isDealed==0){
+                        temp="尚未处理";
+                    }else{
+                        temp="已处理"
+                    }
+                    sReturn = "<div>"+temp+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.dealResult+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    resultList.push(full)
+                    sReturn = "<a href=\"javascript:DealFeedback(" + full.id + ")\">【处理反馈】</a><a href=\"javascript:ModifyDealFeedBack("+full.id+")\">【修改反馈】</a><a href=\"javascript:DeleteDevice(" + full.id + ")\">【删除反馈】</a>";
+                    return sReturn;
+                }, "orderable": true
+            }],
+            "aLengthMenu": [[5, 10, 15, 20, 25, 40, 50, -1], [5, 10, 15, 20, 25, 40, 50, "所有记录"]],
+            "fnDrawCallback": function () {
+                $(".checkboxes").uniform();
+                $(".group-checkable").uniform();
+            },
+            "sAjaxSource": "../../Device_ServletAction?Action=getFeedbackRecord&account=_&"+"tag=2"
+        });
+        $('.datatable').find('.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                    $(this).parents('tr').addClass("active");
+                } else {
+                    $(this).attr("checked", false);
+                    $(this).parents('tr').removeClass("active");
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+        $('.datatable').on('change', 'tbody tr .checkboxes', function () {
+            $(this).parents('tr').toggleClass("active");
+        });
+    };
+
+    let Id;
+    function DealFeedback(id){
+        Id=id;
+        let flag;
+        document.getElementById("dealFeedBackForm").style.display="block";
+        document.getElementById("tag").style.display="block";
+        for(let i=0;i<resultList.length;i++){
+            if(id==resultList[i].id){
+                document.getElementById("feedback").innerText=resultList[i].feedBackContent;
+                flag=resultList[i].isDealed;
+                if(resultList[i].type==1){
+                    clickFeedBack1();
+                }else if(resultList[i].type==2){
+                    clickFeedBack2();
+                }else{
+                    clickFeedBack3();
+                }
+            }
+        }
+        if(flag==1){
+            document.getElementById("dealFeedBackForm").style.display="none";
+            document.getElementById("tag").style.display="none";
+            alert("该反馈已被处理，不可重复处理！")
+            return;
+        }
+        subType=0;// 表示处理反馈
+    }
+
+    // 提交处理结果
+    let subType;
+    function Submit(){
+        let dealResult=document.getElementById("dealResult").value;
+        if(dealResult==""){
+            alert("请输入处理结果!");
+            return;
+        }
+        if(confirm("您确定要提交处理结果吗?")){
+            let message={};
+            message.dealManageId=sessionStorage.getItem("userId");
+            message.dealManageAccount=sessionStorage.getItem("account");
+            message.dealResult=dealResult;
+            message.id=Id;
+            message.Action="dealFeedBack";
+            console.log(message)
+            let url="../../Device_ServletAction";
+            $.post(url, message, function (json){
+                if(json.ok==200){
+                    alert("处理成功!");
+                    window.location.reload();
+                }
+            })
+        }
+    }
+
+    function clickFeedBack1(){
+        document.getElementById("feedback2").classList.remove("active");
+        document.getElementById("feedback3").classList.remove("active");
+        document.getElementById("feedback1").classList.add("active");
+        // alert("反馈系统信息")
+    }
+
+    function clickFeedBack2(){
+        document.getElementById("feedback1").classList.remove("active");
+        document.getElementById("feedback3").classList.remove("active");
+        document.getElementById("feedback2").classList.add("active");
+        // alert("反馈设备信息")
+    }
+
+
+    function clickFeedBack3(){
+        document.getElementById("feedback1").classList.remove("active");
+        document.getElementById("feedback2").classList.remove("active");
+        document.getElementById("feedback3").classList.add("active");
+        // alert("反馈用户信息")
+    }
+
+    function DeleteDevice(id){
+        if(confirm("您确定要删除这条反馈吗？")){
+            if(id>-1){
+                let url="../../Device_ServletAction";
+                let message={};
+                message.Action="deleteInfo";
+                message.id=id;
+                message.tableName="feedbackinfo";
+                $.post(url,message,function(json){
+                    if(json.ok===200){
+                        alert("删除成功");
+                        // 重新加载页面
+                        window.location.reload();
+                    }else{
+                        alert("删除失败，请确定联网，稍后重试!");
+                    }
+                });
+            }
+        }
+    }
+
+    // 修改反馈
+    function ModifyDealFeedBack(id){
+        Id=id;
+        document.getElementById("dealFeedBackForm").style.display="block";
+        document.getElementById("tag").style.display="block";
+        let flag;
+        for(let i=0;i<resultList.length;i++){
+            if(id==resultList[i].id){
+                flag=resultList[i].isDealed;
+                document.getElementById("feedback").innerText=resultList[i].feedBackContent;
+                document.getElementById("dealResult").innerText=resultList[i].dealResult;
+                if(resultList[i].type==1){
+                    clickFeedBack1();
+                }else if(resultList[i].type==2){
+                    clickFeedBack2();
+                }else{
+                    clickFeedBack3();
+                }
+            }
+        }
+        if(flag==0){
+            document.getElementById("dealFeedBackForm").style.display="none";
+            document.getElementById("tag").style.display="none";
+            alert("当前反馈尚未处理，不可修改处理结果!");
+        }
+        subType=1; // 表示修改反馈处理
+    }
+</script>
+
+</html>

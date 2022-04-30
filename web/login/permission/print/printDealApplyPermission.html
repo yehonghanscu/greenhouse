@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>打印用户权限申请记录(success)</title>
+    <link rel="stylesheet" type="text/css" href="../../assets/global/plugins/select2/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="../../assets/global/plugins/datatables/plugins/bootstrap/dataTables.bootstrap.css"/>
+    <link href="../../assets/global/css/components.css" id="style_components" rel="stylesheet" type="text/css"/>
+    <link href="../../assets/global/css/plugins.css" rel="stylesheet" type="text/css"/>
+
+    <link rel="stylesheet" type="text/css" href="../../../css/dataTables.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css"/>
+    <link href="../../../css/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../../../js/jquery.min.js"></script>
+</head>
+<body onload="initDataTable()">
+<div style="position: relative;width: 80%; left: 50%;transform:translate(-50%)">
+    <table class="table table-striped table-bordered table-hover datatable" id="record_list">
+        <thead>
+        <tr>
+            <th class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#record_list .checkboxes" /></th>
+            <th>申请用户(account)</th>
+            <th>申请邮箱(mail)</th>
+            <th>用户原始权限</th>
+            <th>用户申请权限</th>
+            <th>申请日期</th>
+            <th>是否被处理?</th>
+            <th>处理日期</th>
+            <th>处理人</th>
+            <th>处理人等级</th>
+            <th>处理结果</th>
+            <!--添加 允许/拒绝-->
+        </tr>
+        </thead>
+    </table>
+</div>
+</body>
+
+<script type="text/javascript" src="../../../js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../../js/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="../../../js/jquery.dataTables.min.js"></script>
+
+<script>
+    function initDataTable(){
+        $('.datatable').dataTable({
+            "paging": true,
+            "searching": true,
+            "destroy":true,
+            "oLanguage": {
+                "aria": {
+                    "sortAscending": ": activate to sort column ascending",
+                    "sortDescending": ": activate to sort column descending"
+                },
+                "sProcessing": "处理中...",
+                "sLengthMenu": "_MENU_ 记录/页",
+                "sZeroRecords": "没有匹配的记录",
+                "sInfo": "显示第 _START_ 至 _END_ 项记录，共 _TOTAL_ 项",
+                "sInfoEmpty": "显示第 0 至 0 项记录，共 0 项",
+                "sInfoFiltered": "(由 _MAX_ 项记录过滤)",
+                "sInfoPostFix": "",
+                "sSearch": "查询:",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "上页",
+                    "sNext": "下页",
+                    "sLast": "末页"
+                }
+            },
+            "aoColumns": [{
+                "mRender": function (data, type, full) {
+                    sReturn = '<input type="checkbox" class="checkboxes" value="' + data + '"/>';
+                    return sReturn;
+                }, "orderable": false
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.applyAccount+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.mail+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    let level;
+                    if(full.oldLevel==0){
+                        level="系统管理员";
+                    }else if(full.oldLevel==1){
+                        level="普通管理员";
+                    }else{
+                        level="普通用户";
+                    }
+                    sReturn = "<div>"+level+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    let level;
+                    if(full.applyLevel==0){
+                        level="系统管理员";
+                    }else if(full.applyLevel==1){
+                        level="普通管理员";
+                    }else{
+                        level="普通用户";
+                    }
+                    sReturn = "<div>"+level+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.applyDate+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn ="<div>"+full.isDealed+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.dealManageLevel+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.dealManageAccount+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            },{
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>"+full.dealDate+"</div>";
+                    return sReturn;
+                }, "orderable": true
+            }, {
+                "mRender": function (data, type, full) {
+                    sReturn = "<div>" + full.dealResult + "</div>";
+                    return sReturn;
+                }, "orderable": true
+            }],
+            // "aLengthMenu": [[5, 10, 15, 20, 25, 40, 50, -1], [5, 10, 15, 20, 25, 40, 50, "所有记录"]],
+            "fnDrawCallback": function () {
+                $(".checkboxes").uniform();
+                $(".group-checkable").uniform();
+            },
+            "sAjaxSource": "../../../Login_ServletAction?Action=getApplyPermission&applyUserId=_&type=_"
+        });
+
+        $('.datatable').find('.group-checkable').change(function () {
+            var set = jQuery(this).attr("data-set");
+            var checked = jQuery(this).is(":checked");
+            jQuery(set).each(function () {
+                if (checked) {
+                    $(this).attr("checked", true);
+                    $(this).parents('tr').addClass("active");
+                } else {
+                    $(this).attr("checked", false);
+                    $(this).parents('tr').removeClass("active");
+                }
+            });
+            jQuery.uniform.update(set);
+        });
+        $('.datatable').on('change', 'tbody tr .checkboxes', function () {
+            $(this).parents('tr').toggleClass("active");
+        });
+    };
+</script>
+</html>

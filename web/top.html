@@ -1,0 +1,78 @@
+﻿<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>信息管理系统静态模板,网站后台静态模板</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<script language="JavaScript" src="js/jquery.js"></script>
+
+
+</head>
+
+<body style="background:url(images/topbg.gif) repeat-x;" onload="init()">
+
+    <div class="topleft">
+    <a href="main.html" target="_parent"><img src="images/logo.png" title="系统首页" /></a>
+    </div>
+        
+
+            
+    <div class="topright">    
+    <ul>
+    <li><span><img src="images/help.png" title="帮助"  class="helpimg"/></span><a href="#">帮助</a></li>
+    <li><a href="" onclick="logout()">注销</a></li>
+    <li><a href="" onclick="quit()" target="_parent">退出</a></li>
+    </ul>
+     
+    <div class="user">
+    <span id="account">admin</span>
+    <i>消息</i>
+    <b>5</b>
+    </div>
+
+    </div>
+
+
+</body>
+<script>
+    function init(){
+        let Account=sessionStorage.getItem("account");
+        document.getElementById("account").innerText=Account;
+    }
+    // 注销功能
+    function logout(){
+        if(confirm("您确定要注销该账户吗？")){
+            out();
+        }
+    }
+    function out(){
+        let userId=sessionStorage.getItem("userId");
+        let url="Login_ServletAction";
+        let message={};
+        message.Action="logout";
+        message.userId=userId;
+        $.post(url,message,function (json){
+            if(json.ok==200){
+                alert("注销成功!");
+                // 清除数据
+                sessionStorage.clear();
+                window.open("login/login.html")
+            }else{
+                alert("注销失败，请稍后重试!");
+            }
+        })
+    }
+
+    function quit(){
+        sessionStorage.clear();
+        window.opener=null;window.open('','_self');window.close();
+        window.open("login/login.html");
+    }
+
+    document.getElementById("account").onclick=function (){
+        window.parent.frames['rightFrame'].location="login/personalInfo/viewPersonInfo.html?_="+Math.random();
+    }
+
+
+
+
+</script>
+

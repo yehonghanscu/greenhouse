@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<script language="JavaScript" src="../../js/jquery.js" type=""></script>
+<head>
+    <meta charset="UTF-8">
+    <title>统计权限修改信息</title>
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/dataTables.bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css"/>
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body onload="init()">
+<div class="tools">
+    <ul class="toolbar">
+        <li onclick="window.location.href='../permission/viewPermission.html'"><img src="../../images/back.png" />返回</li>
+    </ul>
+</div>
+<div id="main" style="position:relative; width: 88%; height: 500px;"></div>
+</body>
+<script>
+    function init(){
+        alert("开始统计");
+        let url="../../Login_ServletAction";
+        let message={};
+        message.Action="staticPermissionModifyInfo";
+        $.post(url,message,function (json){
+            if(json.ok===200){
+                console.log(json);
+                initTable(json);
+                alert("统计成功!");
+            } else {
+                alert("统计失败!");
+            }
+        });
+    }
+
+    function initTable(json){
+        let myChart = echarts.init(document.getElementById('main'));
+        const option = {
+            color: ['#30c4de'],
+            title: {
+                text: 'User Permission Modify Statistic/用户权限修改统计'
+            },
+            tooltip: {},
+            legend: {
+                data: ['权限修改信息']
+            },
+            xAxis: {
+                data: ["修改总量", "系统管理员修改量", "普通管理员修改量","普通用户修改量","修改成为系统管理员","修改成为普通管理员","修改成为普通用户"]
+            },
+            yAxis: {},
+            series: [{
+                name: '权限修改信息',
+                type: 'bar',
+                data: [ json.modifyNum, json.SManagerNum, json.CManagerNum,json.UserNum,json.NewSManager,json.NewCManager,json.newUser]
+            }]
+        };
+        myChart.setOption(option);
+    }
+</script>
+</html>

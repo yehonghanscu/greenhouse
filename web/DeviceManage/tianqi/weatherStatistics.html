@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+</head>
+<body onload="init()">
+<ul class="toolbar">
+    <li onclick="window.location.href='newTianqi.html'"><img src="../../images/back.png" />返回</li>
+</ul>
+<div style="width: 1200px;height: 700px"></div>
+<script type="text/javascript" src="../../js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="../../js/jquery.dataTables.min.js"></script>
+<script>
+    function init(){
+        alert("开始统计");
+        let url="../../Device_ServletAction";
+        let message={};
+        message.Action="StatisticsWeatherInfo";
+        message.city="成都";
+        $.post(url,message,function (json){
+            if(json.ok===200){
+                console.log(json);
+                alert("统计成功!");
+                xDataArr=json.day;
+                yDataArr1=json.hightem;
+                yDataArr2=json.lowtem;
+                show();
+            } else {
+                alert("统计失败!");
+            }
+        });
+    }
+
+    var xDataArr;
+    var yDataArr1;
+    var yDataArr2;
+    function show(){
+        var mCharts = echarts.init(document.querySelector("div"))
+
+        var option = {
+            xAxis:{
+                type:'category',
+                data:xDataArr,
+            },
+            yAxis:{
+                type:'value'
+            },
+            series:[
+                {
+                    name:'最高温度',
+                    type:'line',
+                    data:yDataArr1,
+                    label: {
+                        show: true,	// 是否可见
+                        rotate: 0 	// 旋转角度
+                    }
+                },
+                {
+                    name:'最低温度',
+                    type:'line',
+                    data:yDataArr2,
+                    label: {
+                        show: true,	// 是否可见
+                        rotate: 0 	// 旋转角度
+                    }
+                }
+            ],
+
+            legend: {
+                data: ['最高温度','最低温度'],
+                left: 'right'
+            }
+        }
+        mCharts.setOption(option)
+    }
+</script>
+</body>
+</html>
