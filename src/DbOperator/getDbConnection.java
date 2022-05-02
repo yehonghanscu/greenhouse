@@ -7,7 +7,7 @@ public class getDbConnection {
 
     // 数据库链接相关常量
 
-    final String http="jdbc:mysql://rm-bp1645nmmp7uxf5uoso.mysql.rds.aliyuncs.com:3306/";
+    final String http="url地址";//此处需改成对应数据库地址
     final String dbName="greenhouse";
 
     private Statement statement;
@@ -17,7 +17,7 @@ public class getDbConnection {
         try{
             Class.forName("com.mysql.jdbc.Driver");
 
-            String connStr=http+dbName+"?user=yhh&password=0028YHHyhh&useUnicode=true&characterEncoding=UTF-8";
+            String connStr=http+dbName+"?user=yhh&password=yhh&useUnicode=true&characterEncoding=UTF-8"; //修改对应用户名及密码
 
             Connection connection= DriverManager.getConnection(connStr);
             statement=connection.createStatement();

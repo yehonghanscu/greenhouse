@@ -25,7 +25,7 @@ public class sendCode {
 
             // 设置主机
             email.setHostName("smtp.qq.com");
-            email.setAuthentication("agriculture2019@foxmail.com", "bjgwpnliyrxcgfaa");
+            email.setAuthentication("系统邮箱账户", "smtp密匙");//此处需要修改成对应账户与密码
             email.setSSLOnConnect(true);
             email.setFrom("agriculture2019@foxmail.com");
             // 发送内容
